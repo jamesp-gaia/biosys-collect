@@ -1,0 +1,27 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-menu-toggle>
+            <ion-button>
+                <fa-icon icon="bars" size="lg"></fa-icon>
+            </ion-button>
+        </ion-menu-toggle>
+        <ion-title>Settings</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-card>
+        <ion-card-content>
+            <ion-grid>
+                <ion-row>
+                    <ion-label>Hide uploaded records</ion-label>
+                    <ion-toggle [(ngModel)] = "hideUploaded" (ionChange)="ionChangeHideUploaded(event)"></ion-toggle>
+                </ion-row>
+                <ion-row>
+                    <ion-label>Delete uploaded records</ion-label>
+                    <ion-button size="small" (click)="clickDeleteUploadedRecords()">Delete</ion-button>
+                </ion-row>
+            </ion-grid>
+        </ion-card-content>
+    </ion-card>
+</ion-content>

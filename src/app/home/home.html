@@ -1,0 +1,42 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-menu-toggle>
+<ion-button>
+            <fa-icon icon="bars" size="lg"></fa-icon>
+        </ion-button>
+</ion-menu-toggle>
+        <ion-title>Observation / Census Records</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-tabs tabsLayout="icon-start" tabsPlacement="top">
+        <ion-tab tabIcon="list" tabTitle="List View" title="List" (ionSelect)="setMapTabSelected(false)"
+                 [rootParams]="{showLegend: true, data: records, navCtrl: navCtrl }" [root]="recordsList">
+        </ion-tab>
+        <ion-tab tabIcon="map" tabTitle="Map View" title="Map" (ionSelect)="setMapTabSelected(true)"
+                 [rootParams]="{data:records, navCtrl: navCtrl}" [root]="recordsMap">
+        </ion-tab>
+    </ion-tabs>
+
+    <ion-fab slot="fixed" id="myFabUpload" name="Upload" alt="Upload Records" aria-name="Upload Records" vertical="bottom" left *ngIf="records && records.length && !isMapTabSelected">
+        <ion-fab-button alt="Upload Records" aria-name="Upload Records" (click)="clickedUpload()">
+            <img alt="Upload Records" class="home-fab-icon" src="assets/imgs/white_upload.png">
+        </ion-fab-button>
+        <ion-label style="text-align: center">Upload</ion-label>
+    </ion-fab>
+
+    <ion-fab slot="fixed" id="myFabObo" alt="Koala Opportunistic Observation" aria-name="Koala Observation" vertical="bottom" right *ngIf="records && records.length && !isMapTabSelected" style="right: 120px">
+        <ion-fab-button (click)="onClickedNewRecord(DATASETNAME_OBSERVATION)">
+            <img alt="Create Koala Observation" class="home-fab-icon" src="assets/imgs/white_eye.png">
+        </ion-fab-button>
+        <ion-label style="text-align: center">Observation</ion-label>
+    </ion-fab>
+
+    <ion-fab slot="fixed" id="myFabTree" alt="Koala Census" aria-name="Koala Census" vertical="bottom" right *ngIf="records && records.length && !isMapTabSelected">
+        <ion-fab-button alt="Koala Census" aria-name="Koala Census" (click)="onClickedNewRecord(DATASETNAME_CENSUS)">
+            <img alt="Create Census" class="home-fab-icon" src="assets/imgs/white_trees.png">
+        </ion-fab-button>
+        <ion-label style="text-align: center">Census</ion-label>
+    </ion-fab>
+</ion-content>

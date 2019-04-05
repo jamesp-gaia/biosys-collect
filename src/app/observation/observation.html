@@ -1,0 +1,44 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-title>{{ dataset?.name }}</ion-title>
+        <ion-buttons *ngIf="!readonly" slot="primary">
+            <ion-button slot="end" fill="solid" color="primary" (click)="delete()">
+                Delete&nbsp;
+                <fa-icon [icon]="['far', 'trash-alt']"></fa-icon>
+            </ion-button>
+            <ion-button slot="end" fill="solid" color="primary" (click)="save()">
+                Save&nbsp;
+                <fa-icon [icon]="['far', 'save']"></fa-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+    <ion-segment [(ngModel)]="showForm" color="primary">
+        <ion-segment-button [value]="true">
+            <ion-label>Form</ion-label>
+        </ion-segment-button>
+        <ion-segment-button [value]="false">
+            <ion-label>Photos</ion-label>
+        </ion-segment-button>
+    </ion-segment>
+
+    <div>
+        <div [hidden]="!showForm">
+            <record-form [dataset]="dataset"
+                         [initialiseDefaultValues]="isNewRecord"
+                         [readonly]="readonly"></record-form>
+        </div>
+        <div [hidden]="showForm">
+            <photo-gallery [readonly]="readonly"></photo-gallery>
+        </div>
+    </div>
+
+    <ion-fab slot="fixed" [hidden]="readonly || showForm" vertical="bottom" right>
+        <ion-fab-button aria-name="Add Photo" alt="Add Photo" (click)="onClickedNewPhoto()" class="fab-census-tree">
+            <img alt="Add Photo" class="fab-img" src="assets/imgs/fab-camera.png">
+        </ion-fab-button>
+    </ion-fab>
+
+</ion-content>
