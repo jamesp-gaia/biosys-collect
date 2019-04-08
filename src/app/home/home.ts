@@ -4,7 +4,7 @@ import {
    // Loading,
     LoadingController,
     NavController,
-    NavParams,
+ //   NavParams,
    // Tabs,
     ToastController
 } from '@ionic/angular';
@@ -46,7 +46,7 @@ export class HomePage implements OnInit {
 
     public isMapTabSelected = false;
 
-    constructor(public navCtrl: NavController, public navParams: NavParams, private loadingCtrl: LoadingController,
+    constructor(public navCtrl: NavController, private loadingCtrl: LoadingController,
                 private toastCtrl: ToastController, private storageService: StorageService,
                 private uploadService: UploadService, private event: Events, private router: Router) {
         this.records = [];
