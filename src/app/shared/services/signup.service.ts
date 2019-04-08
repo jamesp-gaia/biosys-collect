@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { catchError } from 'rxjs/operators/catchError';
-import { APIError } from 'biosys-core/interfaces/api.interfaces';
+import { APIError } from '../../biosys-core/interfaces/api.interfaces';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PROJECT_NAME } from '../utils/consts';

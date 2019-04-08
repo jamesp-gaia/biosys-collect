@@ -34,24 +34,21 @@ import {
     templateUrl: 'login.html',
 })
 export class LoginPage {
-    public form: FormGroup;
+    // public form: FormGroup;
 
     public REGO_URL = REGO_URL;
     private dialog: any;
 
-    constructor(public navCtrl: NavController,
-                public navParams: NavParams,
-                private apiService: APIService,
+    constructor(private apiService: APIService,
                 private authService: AuthService,
                 private storageService: StorageService,
-                private formBuilder: FormBuilder,
                 private alertController: AlertController,
                 private loadingCtrl: LoadingController,
                 private router: Router) {
-        this.form = this.formBuilder.group({
-            'username': ['', Validators.required],
-            'password': ['', Validators.required]
-        });
+        // this.form = this.formBuilder.group({
+        //     'username': ['', Validators.required],
+        //     'password': ['', Validators.required]
+        // });
     }
 
     public signup() {
@@ -79,14 +76,14 @@ export class LoginPage {
       return;
     }
 
-    public async login() {
+    public async login(form) {
         const loading = this.loadingCtrl.create({
             message: 'Logging in'
         });
         (await loading).present();
 
-        const username = this.form.value['username'];
-        const password = this.form.value['password'];
+        const username = form.value['username'];
+        const password = form.value['password'];
 
         this.authService.login(username, password).subscribe(async() => {
                 const params = {

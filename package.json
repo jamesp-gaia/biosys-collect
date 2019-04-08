@@ -35,7 +35,6 @@
     "@mobiscroll/angular": "file:./src/lib/mobiscroll-package/mobiscroll-angular-4.2.4.tgz",
     "@types/geojson": "^7946.0.7",
     "angular2-uuid": "latest",
-    "biosys-core": "./src/app/biosys-core",
     "cordova-plugin-camera": "^4.0.3",
     "cordova-plugin-geolocation": "^4.0.1",
     "cordova-plugin-googlemaps": "~2.3.4",

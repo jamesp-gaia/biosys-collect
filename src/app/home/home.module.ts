@@ -11,7 +11,7 @@ import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { StorageService } from '../shared/services/storage.service';
 import { IonicStorageModule } from '@ionic/storage';
 import { UploadService } from '../shared/services/upload.service';
-import { APIService } from 'biosys-core/services/api.service';
+import { APIService } from '../biosys-core/services/api.service';
 import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
