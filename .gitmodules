@@ -1,0 +1,3 @@
+[submodule "src/app/biosys-core"]
+	path = src/app/biosys-core
+	url = git@github.com:gaiaresources/biosys-core.git
