@@ -10,14 +10,58 @@
 </ion-header>
 
 <ion-content>
-    <ion-tabs tabsLayout="icon-start" tabsPlacement="top">
+
+    <ion-tabs>
+        <ion-tab-bar slot="bottom">
+            <ion-tab-button tab="schedule">
+            <ion-icon name="calendar"></ion-icon>
+            <ion-label>Schedule</ion-label>
+            <ion-badge>6</ion-badge>
+            </ion-tab-button>
+        
+            <ion-tab-button tab="speakers">
+            <ion-icon name="contacts"></ion-icon>
+            <ion-label>Speakers</ion-label>
+            </ion-tab-button>
+        
+            <ion-tab-button tab="map">
+            <ion-icon name="map"></ion-icon>
+            <ion-label>Map</ion-label>
+            </ion-tab-button>
+        
+            <ion-tab-button tab="about">
+            <ion-icon name="information-circle"></ion-icon>
+            <ion-label>About</ion-label>
+            </ion-tab-button>
+        </ion-tab-bar>
+    </ion-tabs>
+
+    <!-- <ion-tabs tabsLayout="icon-start" tabsPlacement="top">
+        <ion-tab-bar>
+            <ion-tab-button tab="map" disabled="true">
+        </ion-tab-bar>
         <ion-tab tabIcon="list" tabTitle="List View" title="List" (ionSelect)="setMapTabSelected(false)"
-                 [rootParams]="{showLegend: true, data: records, navCtrl: navCtrl }" [root]="recordsList">
+                [rootParams]="{showLegend: true, data: records, navCtrl: navCtrl }" [root]="recordsList">
         </ion-tab>
         <ion-tab tabIcon="map" tabTitle="Map View" title="Map" (ionSelect)="setMapTabSelected(true)"
-                 [rootParams]="{data:records, navCtrl: navCtrl}" [root]="recordsMap">
+                [rootParams]="{data:records, navCtrl: navCtrl}" [root]="recordsMap">
         </ion-tab>
-    </ion-tabs>
+    </ion-tabs> -->
+
+    <!-- <ion-tabs>
+        <ion-tab tabTitle="Map" tabIcon="map" tabBadge="2" tabBadgeStyle="danger" enabled="false"></ion-tab>
+    </ion-tabs> -->
+
+    <!-- <ion-tabs>
+        <ion-tab-bar>
+            A route to <current-route>/map must exist
+            <ion-tab-button tab="map" disabled="true">
+            <ion-icon name="map"></ion-icon>
+            <ion-label>Map</ion-label>
+            <ion-badge color="danger">2</ion-badge>
+            </ion-tab-button>
+        </ion-tab-bar>
+    </ion-tabs> -->
 
     <ion-fab slot="fixed" id="myFabUpload" name="Upload" alt="Upload Records" aria-name="Upload Records" vertical="bottom" left *ngIf="records && records.length && !isMapTabSelected">
         <ion-fab-button alt="Upload Records" aria-name="Upload Records" (click)="clickedUpload()">
