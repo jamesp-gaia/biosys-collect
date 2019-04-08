@@ -16,7 +16,6 @@ import { faBars } from '@fortawesome/free-solid-svg-icons';
     CommonModule,
     IonicModule,
     RouterModule.forChild([{ path: '', component: HomePage }]),
-    ComponentsModule,
     FontAwesomeModule
   ],
 })

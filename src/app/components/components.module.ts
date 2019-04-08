@@ -8,6 +8,7 @@ import { IonicModule } from '@ionic/angular';
 import { RecordFormComponent } from './record-form/record-form';
 import { SharedModule } from '../shared/shared.module';
 import { PhotoGalleryComponent } from './photo-gallery/photo-gallery';
+import { CommonModule } from '@angular/common';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -22,6 +23,7 @@ import { faStar as fasStar, faLocationArrow } from '@fortawesome/free-solid-svg-
     ],
     imports: [
         IonicModule,
+        CommonModule,
         MbscModule,
         SharedModule,
         FontAwesomeModule

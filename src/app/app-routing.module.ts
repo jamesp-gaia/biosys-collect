@@ -8,6 +8,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
+    // TODO populate routes for other components
     RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
   ],
   exports: [RouterModule]
