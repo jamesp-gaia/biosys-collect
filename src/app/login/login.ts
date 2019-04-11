@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { AlertController,  LoadingController, NavController, NavParams } from '@ionic/angular';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AlertController, LoadingController, NavController } from '@ionic/angular';
 
 import { from } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
@@ -15,12 +14,7 @@ import { ApiResponse } from '../shared/interfaces/mobile.interfaces';
 
 import { SignUpPage } from '../sign-up/sign-up';
 
-import {
-  REGO_URL,
-  PROJECT_NAME,
-  SIGNUP_TERMS_AND_CONDITIONS_HTML,
-  SIGNUP_TERMS_AND_CONDITIONS_HTML_OLD
-} from '../shared/utils/consts';
+import { PROJECT_NAME, REGO_URL, SIGNUP_TERMS_AND_CONDITIONS_HTML } from '../shared/utils/consts';
 
 /**
  * Generated class for the LoginPage page.
@@ -30,148 +24,153 @@ import {
  */
 
 @Component({
-    selector: 'page-login',
-    templateUrl: 'login.html',
+  selector: 'page-login',
+  templateUrl: 'login.html',
 })
 export class LoginPage {
-    // public form: FormGroup;
+  // public form: FormGroup;
 
-    public REGO_URL = REGO_URL;
-    private dialog: any;
+  public REGO_URL = REGO_URL;
+  private dialog: any;
+  private loading: any;
 
-    constructor(private apiService: APIService,
-                private authService: AuthService,
-                private storageService: StorageService,
-                private alertController: AlertController,
-                private loadingCtrl: LoadingController,
-                private router: Router) {
-        // this.form = this.formBuilder.group({
-        //     'username': ['', Validators.required],
-        //     'password': ['', Validators.required]
+  constructor(private apiService: APIService,
+              private authService: AuthService,
+              private storageService: StorageService,
+              private alertController: AlertController,
+              private loadingCtrl: LoadingController,
+              private navCtrl: NavController,
+              private router: Router) {
+  }
+
+
+  private async presentLoading(config?: any): Promise<any> {
+    this.loading = await this.loadingCtrl.create(config);
+    return await this.loading.present();
+  }
+
+  public signup() {
+    this.dialog = this.alertController.create({
+      header: 'Terms and Conditions',
+      subHeader: 'To sign up to I See Koala you\'ll need to agree to the following terms and conditions:',
+      message: SIGNUP_TERMS_AND_CONDITIONS_HTML,
+      mode: 'md',
+      buttons: [
+        {
+          text: 'Yes',
+          handler: () => {
+            this.router.navigateByUrl('SignUpPage');
+          }
+        },
+        {
+          text: 'No',
+          handler: () => {
+          }
+        }
+      ]
+    });
+    this.dialog.present().then((result) => {
+    });
+    return;
+  }
+
+  public async login(form, username, password) {
+    from(this.presentLoading({
+      message: 'Logging in...'
+    }))
+    .pipe(mergeMap(() => this.authService.login(username, password)))
+    .subscribe(() =>  {
+        const params = {
+          project__name: PROJECT_NAME
+        };
+
+        this.apiService.getDatasets(params).pipe(
+          mergeMap((datasets: Dataset[]) => from(datasets).pipe(
+            mergeMap((dataset: Dataset) => this.storageService.putDataset(dataset))
+          ))
+        ).subscribe();
+
+        this.apiService.getUsers(params).pipe(
+          mergeMap((users: User[]) => this.storageService.putTeamMembers(users))
+        ).subscribe();
+        this.loading.dismiss();
+        console.log('logging', 'Trying to nav');
+        this.navCtrl.navigateForward('project-selector').then(() => {});
+        // const foo = this.router.navigateByUrl('project-selector');
+        // foo.then( (value) => {
+        //   console.log('navyes', value);
+        // }, reason => {
+        //   console.log('navno', reason);
         // });
-    }
-
-    public signup() {
-      this.dialog = this.alertController.create({
-        header: 'Terms and Conditions',
-        subHeader: 'To sign up to I See Koala you\'ll need to agree to the following terms and conditions:',
-        message: SIGNUP_TERMS_AND_CONDITIONS_HTML,
-        mode: 'md',
-        buttons: [
-          {
-            text: 'Yes',
-            handler: () => {
-              this.router.navigateByUrl('SignUpPage');
-            }
-          },
-          {
-            text: 'No',
-            handler: () => {
-            }
-          }
-        ]
+      },
+      async(e) => {
+        this.loading.dismiss();
+        const apiResponse = formatAPIError(e) as ApiResponse;
+        (await this.alertController.create({
+          header: 'Login Problem',
+          subHeader: !!apiResponse.non_field_errors ? apiResponse.non_field_errors[0] :
+            'There was a problem contacting the server, try again later',
+          buttons: ['Ok']
+        })).present();
       });
-      this.dialog.present().then((result) => {
-      });
-      return;
-    }
+  }
 
-    public async login(form) {
-        const loading = this.loadingCtrl.create({
-            message: 'Logging in'
-        });
-        (await loading).present();
+  public async resetPassword() {
+    const askEmail = (await this.alertController.create({
+      header: 'Enter your email address',
+      subHeader: 'To unlock your account, please enter your email address.',
+      buttons: [
+        {
+          text: 'Ok',
+          handler: async(deets) => {
+            const waitingForReset = this.alertController.create( {
+              header: 'Resetting your password',
+              subHeader: 'Requesting a password reset for your account...',
+              buttons: [ {
+                text: 'Cancel',
+                role: 'cancel',
+              }]
+            });
+            (await waitingForReset).present();
 
-        const username = form.value['username'];
-        const password = form.value['password'];
-
-        this.authService.login(username, password).subscribe(async() => {
-                const params = {
-                    project__name: PROJECT_NAME
-                };
-
-                this.apiService.getDatasets(params).pipe(
-                    mergeMap((datasets: Dataset[]) => from(datasets).pipe(
-                        mergeMap((dataset: Dataset) => this.storageService.putDataset(dataset))
-                    ))
-                ).subscribe();
-
-                this.apiService.getUsers(params).pipe(
-                    mergeMap((users: User[]) => this.storageService.putTeamMembers(users))
-                ).subscribe();
-
-                (await loading).dismiss();
-                this.router.navigateByUrl('HomePage');
-            },
-            async(error) => {
-                (await loading).dismiss();
-                const apiResponse = formatAPIError(error) as ApiResponse;
-                (await this.alertController.create({
-                    header: 'Login Problem',
-                    subHeader: !!apiResponse.non_field_errors ? apiResponse.non_field_errors[0] :
-                        'There was a problem contacting the server, try again later',
-                    buttons: ['Ok']
-                })).present();
-            }
-        );
-    }
-
-    public async resetPassword() {
-      const askEmail = (await this.alertController.create({
-        header: 'Enter your email address',
-        subHeader: 'To unlock your account, please enter your email address.',
-        buttons: [
-          {
-            text: 'Ok',
-            handler: async(deets) => {
-              const waitingForReset = this.alertController.create( {
-                header: 'Resetting your password',
-                subHeader: 'Requesting a password reset for your account...',
-                buttons: [ {
-                  text: 'Cancel',
-                  role: 'cancel',
-                }]
-              });
-              (await waitingForReset).present();
-
-              this.apiService.forgotPassword(deets.email).subscribe( async(ok) => {
-                  (await waitingForReset).dismiss();
-                  const done = this.alertController.create( {
-                    header: 'Password Reset',
-                    subHeader: 'Your password has been reset. Please check your email for more details.',
-                    buttons: [ {
-                      text: 'OK',
-                      role: 'ok',
-                    }]
-                  });
-                  (await done).present();
-                },
-                async(resetErr) => {
-                  (await waitingForReset).dismiss();
-                  const done = this.alertController.create( {
-                    header: 'Password Reset Problem',
-                    subHeader: 'There was a problem resetting your password. Please try again later.',
-                    buttons: [ {
-                      text: 'OK',
-                      role: 'ok',
-                    }]
-                  });
-                  (await done).present();
+            this.apiService.forgotPassword(deets.email).subscribe( async(ok) => {
+                (await waitingForReset).dismiss();
+                const done = this.alertController.create( {
+                  header: 'Password Reset',
+                  subHeader: 'Your password has been reset. Please check your email for more details.',
+                  buttons: [ {
+                    text: 'OK',
+                    role: 'ok',
+                  }]
                 });
-            }
-          },
-          {
-            text: 'Cancel',
-            role: 'cancel'
+                (await done).present();
+              },
+              async(resetErr) => {
+                (await waitingForReset).dismiss();
+                const done = this.alertController.create( {
+                  header: 'Password Reset Problem',
+                  subHeader: 'There was a problem resetting your password. Please try again later.',
+                  buttons: [ {
+                    text: 'OK',
+                    role: 'ok',
+                  }]
+                });
+                (await done).present();
+              });
           }
-        ],
-        inputs: [
-          {
-            name: 'email',
-            type: 'email',
-            placeholder: 'Please enter your email address'
-          }
-        ]
-      })).present();
-    }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        }
+      ],
+      inputs: [
+        {
+          name: 'email',
+          type: 'email',
+          placeholder: 'Please enter your email address'
+        }
+      ]
+    })).present();
+  }
 }
