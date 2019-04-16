@@ -75,6 +75,18 @@ export class LoginPage {
   }
 
   public async login(form, username, password) {
+    try {
+      this.router.navigate(['project-selector']).then(
+        (x) => {
+          console.log('navyes', x);
+        },
+        (y) => {
+          console.log('navno', y);
+        });
+    } catch (e) {
+     console.log('e', e);
+    }
+    return;
     from(this.presentLoading({
       message: 'Logging in...'
     }))
@@ -95,13 +107,14 @@ export class LoginPage {
         ).subscribe();
         this.loading.dismiss();
         console.log('logging', 'Trying to nav');
-        this.navCtrl.navigateForward('project-selector').then(() => {});
-        // const foo = this.router.navigateByUrl('project-selector');
+        // const foo = this.router.navigateByUrl('/project-selector')
+        // console.log('navnav', foo);
         // foo.then( (value) => {
         //   console.log('navyes', value);
-        // }, reason => {
+        // }, (reason) => {
         //   console.log('navno', reason);
         // });
+        this.router.navigate(['/project-selector']);
       },
       async(e) => {
         this.loading.dismiss();

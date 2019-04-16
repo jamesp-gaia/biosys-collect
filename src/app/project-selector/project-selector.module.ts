@@ -7,20 +7,19 @@ import { IonicModule } from '@ionic/angular';
 
 import { ProjectSelectorPage } from './project-selector.page';
 
-const routes: Routes = [
-  {
-    path: 'project-selector',
-    component: ProjectSelectorPage
-  }
-];
-
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild([
+      {
+        path: '',
+        component: ProjectSelectorPage
+      },
+    ])
   ],
-  declarations: [ProjectSelectorPage]
+  declarations: [ProjectSelectorPage],
+  exports: [ProjectSelectorPage]
 })
 export class ProjectSelectorPageModule {}

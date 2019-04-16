@@ -17,7 +17,13 @@ import { AuthService } from '../biosys-core/services/auth.service';
   imports: [
     IonicModule.forRoot(),
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    RouterModule.forChild([
+      {
+        path: '',
+        component: LoginPage
+      },
+    ])
   ],
   providers: [
     StorageService,

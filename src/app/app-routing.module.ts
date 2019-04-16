@@ -1,21 +1,24 @@
 import { NgModule } from '@angular/core';
-import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { LoginPageModule } from './login/login.module';
-import { LoginPage } from './login/login';
-import { ProjectSelectorPageModule } from './project-selector/project-selector.module';
+import { RouterModule, Routes } from '@angular/router';
 
+// const routes: Routes = [
+  // { path: '', redirectTo: 'login', pathMatch: 'full' },
+  // { path: 'login', component: LoginPage},
+  // { path: 'project-selector', component: ProjectSelectorPage},
+  // TODO populate routes for other components
+// ];
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'login', component: LoginPage},
-  { path: 'project-selector', loadChildren: './project-selector/project-selector.module#ProjectSelectorPageModule' },
+  { path: 'login', loadChildren: './login/login.module#LoginPageModule'},
+  { path: 'project-selector', loadChildren: './project-selector/project-selector.module#ProjectSelectorPageModule'},
+  // TODO populate routes for other components
 ];
 
 @NgModule({
   imports: [
-    // TODO populate routes for other components
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules }),
-    ProjectSelectorPageModule,
-    LoginPageModule
+    RouterModule.forRoot(routes),
+    // LoginPageModule,
+    // ProjectSelectorPageModule
   ],
   exports: [RouterModule]
 })

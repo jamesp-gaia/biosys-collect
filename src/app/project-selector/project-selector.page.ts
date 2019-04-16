@@ -7,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ProjectSelectorPage implements OnInit {
 
-  public projects: any = [
+  public projects = [
     {
       name: 'Hello'
     },
