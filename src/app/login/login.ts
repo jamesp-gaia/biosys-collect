@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AlertController, LoadingController, NavController } from '@ionic/angular';
 
 import { from } from 'rxjs';
@@ -15,6 +15,7 @@ import { ApiResponse } from '../shared/interfaces/mobile.interfaces';
 import { SignUpPage } from '../sign-up/sign-up';
 
 import { PROJECT_NAME, REGO_URL, SIGNUP_TERMS_AND_CONDITIONS_HTML } from '../shared/utils/consts';
+import { MobileService } from '../shared/services/mobile.service';
 
 /**
  * Generated class for the LoginPage page.
@@ -27,9 +28,7 @@ import { PROJECT_NAME, REGO_URL, SIGNUP_TERMS_AND_CONDITIONS_HTML } from '../sha
   selector: 'page-login',
   templateUrl: 'login.html',
 })
-export class LoginPage {
-  // public form: FormGroup;
-
+export class LoginPage implements OnInit {
   public REGO_URL = REGO_URL;
   private dialog: any;
   private loading: any;
@@ -40,7 +39,8 @@ export class LoginPage {
               private alertController: AlertController,
               private loadingCtrl: LoadingController,
               private navCtrl: NavController,
-              private router: Router) {
+              private router: Router,
+              private mobileState: MobileService) {
   }
 
 
@@ -74,47 +74,41 @@ export class LoginPage {
     return;
   }
 
-  public async login(form, username, password) {
-    try {
-      this.router.navigate(['project-selector']).then(
-        (x) => {
-          console.log('navyes', x);
-        },
-        (y) => {
-          console.log('navno', y);
-        });
-    } catch (e) {
-     console.log('e', e);
+  private loginOK() {
+    // call this when we have established that we think we are logged in...
+    console.log('current', this.mobileState.offline);
+    if (this.mobileState.offline === true) {
+      console.log('login-ok', 'is offline');
+      return;
+    } else {
+      this.apiService.getProjects({}).subscribe((result) => {
+        if (this.loading) {
+          this.loading.dismiss();
+        }
+        this.mobileState.projects = result;
+        console.log('proj', result);
+        this.router.navigateByUrl('/project-selector');
+      }, (error) => {
+        if (this.loading) {
+          this.loading.dismiss();
+        }
+        this.alertController.create({
+          header: 'Login Problem',
+          subHeader: 'There was a problem contacting the server, try again later',
+          buttons: ['Ok']
+        }).then();
+      });
     }
     return;
+  }
+
+  public async login(form, username, password) {
     from(this.presentLoading({
       message: 'Logging in...'
     }))
     .pipe(mergeMap(() => this.authService.login(username, password)))
     .subscribe(() =>  {
-        const params = {
-          project__name: PROJECT_NAME
-        };
-
-        this.apiService.getDatasets(params).pipe(
-          mergeMap((datasets: Dataset[]) => from(datasets).pipe(
-            mergeMap((dataset: Dataset) => this.storageService.putDataset(dataset))
-          ))
-        ).subscribe();
-
-        this.apiService.getUsers(params).pipe(
-          mergeMap((users: User[]) => this.storageService.putTeamMembers(users))
-        ).subscribe();
-        this.loading.dismiss();
-        console.log('logging', 'Trying to nav');
-        // const foo = this.router.navigateByUrl('/project-selector')
-        // console.log('navnav', foo);
-        // foo.then( (value) => {
-        //   console.log('navyes', value);
-        // }, (reason) => {
-        //   console.log('navno', reason);
-        // });
-        this.router.navigate(['/project-selector']);
+        this.loginOK();
       },
       async(e) => {
         this.loading.dismiss();
@@ -126,6 +120,7 @@ export class LoginPage {
           buttons: ['Ok']
         })).present();
       });
+    return;
   }
 
   public async resetPassword() {
@@ -185,5 +180,14 @@ export class LoginPage {
         }
       ]
     })).present();
+  }
+
+  ngOnInit(): void {
+    if (localStorage.getItem('auth_token') !== null) {
+      console.log('token', localStorage.getItem('auth_token'));
+      this.loginOK();
+    } else {
+      console.log('token', 'no');
+    }
   }
 }
