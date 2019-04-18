@@ -13,18 +13,25 @@ import { IonicStorageModule } from '@ionic/storage';
 import { UploadService } from './shared/services/upload.service';
 import { APIService } from './biosys-core/services/api.service';
 import { HttpClientModule } from '@angular/common/http';
+import { MobileService } from './shared/services/mobile.service';
 
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, IonicStorageModule.forRoot(),HttpClientModule],
+  imports: [
+    BrowserModule,
+    IonicModule.forRoot(),
+    AppRoutingModule,
+    IonicStorageModule.forRoot(),
+    HttpClientModule],
   providers: [
     StatusBar,
     SplashScreen,
     StorageService,
     UploadService,
     APIService,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    MobileService
   ],
   bootstrap: [AppComponent]
 })

@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 import { LoginPage } from './login';
-import { FormsModule }   from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 
 import { StorageService } from '../shared/services/storage.service';
 import { UploadService } from '../shared/services/upload.service';
@@ -16,9 +16,14 @@ import { AuthService } from '../biosys-core/services/auth.service';
   ],
   imports: [
     IonicModule.forRoot(),
-    RouterModule.forChild([{ path: '', component: LoginPage }]),
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    RouterModule.forChild([
+      {
+        path: '',
+        component: LoginPage
+      },
+    ])
   ],
   providers: [
     StorageService,
