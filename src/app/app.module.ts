@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+
 import { RouteReuseStrategy } from '@angular/router';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
@@ -14,12 +14,15 @@ import { UploadService } from './shared/services/upload.service';
 import { APIService } from './biosys-core/services/api.service';
 import { HttpClientModule } from '@angular/common/http';
 import { MobileService } from './shared/services/mobile.service';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {BrowserModule } from '@angular/platform-browser';
 
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     IonicModule.forRoot(),
     AppRoutingModule,
     IonicStorageModule.forRoot(),

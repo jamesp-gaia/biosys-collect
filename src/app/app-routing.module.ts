@@ -8,9 +8,10 @@ import { RouterModule, Routes } from '@angular/router';
   // TODO populate routes for other components
 // ];
 const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', redirectTo: 'form', pathMatch: 'full' },
   { path: 'login', loadChildren: './login/login.module#LoginPageModule'},
   { path: 'project-selector', loadChildren: './project-selector/project-selector.module#ProjectSelectorPageModule'},
+  { path: 'form', loadChildren: './form/form.module#FormModule'},
   // TODO populate routes for other components
 ];
 
