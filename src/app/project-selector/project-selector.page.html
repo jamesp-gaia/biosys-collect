@@ -6,7 +6,7 @@
 
 <ion-content>
     <ion-virtual-scroll [items]="mobileState.projects">
-        <ion-item *virtualItem="let item" (click)="alert('fooboo')">
+        <ion-item *virtualItem="let item" (click)="projectGo(item)">
             <ion-item lines="none" *ngIf="!mobileState.offline">
                 <ion-checkbox (click)="projectToggle(item, checked)" slot="start"></ion-checkbox>
             </ion-item>

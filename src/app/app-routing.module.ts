@@ -12,13 +12,13 @@ const routes: Routes = [
   { path: 'login', loadChildren: './login/login.module#LoginPageModule'},
   { path: 'project-selector', loadChildren: './project-selector/project-selector.module#ProjectSelectorPageModule'},
   // TODO populate routes for other components
+  { path: 'form-selector', loadChildren: './form-selector/form-selector.module#FormSelectorPageModule' },
+  { path: 'form-viewer', loadChildren: './form-viewer/form-viewer.module#FormViewerPageModule' }
 ];
 
 @NgModule({
   imports: [
     RouterModule.forRoot(routes),
-    // LoginPageModule,
-    // ProjectSelectorPageModule
   ],
   exports: [RouterModule]
 })

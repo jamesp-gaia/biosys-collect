@@ -1,10 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { MobileService } from '../shared/services/mobile.service';
 import { AlertController, LoadingController } from '@ionic/angular';
-
-import { from } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
 
@@ -16,16 +12,29 @@ import { Router } from '@angular/router';
 export class ProjectSelectorPage implements OnInit {
 
   private clickedStatus = {};
-  private loading: any;
+  private loading: Promise<any>;
 
   constructor(private loadingCtrl: LoadingController, private alertController: AlertController,
-              public mobileState: MobileService) {
+              private router: Router, public mobileState: MobileService) {
   }
 
   ngOnInit() {}
 
   public projectGo(project: any) {
-    alert(project.name);
+    this.mobileState.currentProject = project;
+    this.loading = this.loadingCtrl.create({
+      message: 'Loading forms for this project ...'
+    });
+    this.loading.then( (formControl) => {
+      this.mobileState.getForms(project).subscribe(
+        (forms) => {
+          console.log('forms', forms);
+          this.mobileState.setProjectForms(project.id, forms);
+          this.router.navigateByUrl('/form-selector');
+        }, (err) => {
+          console.log('err', err);
+        });
+    }, (err) => {});
     return;
   }
 
@@ -50,10 +59,10 @@ export class ProjectSelectorPage implements OnInit {
         }, 200);
       } else {
         setTimeout(async () => {
-          this.loading = await this.loadingCtrl.create({
+          this.loading = this.loadingCtrl.create({
             message: 'Caching projects for offline use ...'
           });
-          await this.loading.present();
+          this.loading.then( (ok) => {});
           // TODO: perform caching action here
         }, 200);
         // Now we are clear to go offline
