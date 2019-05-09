@@ -2,21 +2,25 @@ import { Inject, Injectable } from '@angular/core';
 import { APIService } from '../../biosys-core/services/api.service';
 import { catchError } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { User } from '../../biosys-core/interfaces/api.interfaces';
-import { HttpClient, HttpHeaders } from '../../../../node_modules/@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 // Something to hold global state that is needed across the app.
 
 @Injectable()
 export class MobileService extends APIService {
   private _projects: any; // TODO: make interface
-  private _offline;
+
+  private _offline: boolean;
+
   private _projectCurrent: any;
 
   private _forms: Array<any> = [];
 
+  private _viewingForm: any;
+
   constructor(@Inject(HttpClient) httpClient) {
     super(httpClient);
+    this._offline = false;
   }
 
   public get offline(): boolean {
@@ -24,11 +28,11 @@ export class MobileService extends APIService {
   }
   public set offline(state: boolean) {
     this._offline = state;
-    localStorage.setItem('offline', this._offline);
+    // localStorage.setItem('offline', this._offline.toString());
   }
   public offlineToggle() {
     this._offline = !this.offline;
-    localStorage.setItem('offline', this._offline);
+    // localStorage.setItem('offline', this._offline.toString());
     return this._offline;
   }
 
@@ -63,5 +67,12 @@ export class MobileService extends APIService {
   }
   public getProjectForms(projectID: number) {
     return this._forms[projectID];
+  }
+
+  public setViewForm(form: any) {
+    this._viewingForm = form;
+  }
+  public getViewForm() {
+    return this._viewingForm;
   }
 }

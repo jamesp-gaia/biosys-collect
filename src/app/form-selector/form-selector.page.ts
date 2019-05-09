@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MobileService } from '../shared/services/mobile.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-form-selector',
@@ -9,7 +10,8 @@ import { MobileService } from '../shared/services/mobile.service';
 export class FormSelectorPage implements OnInit {
   public forms: any;
 
-  constructor(mobileService: MobileService) {
+  constructor(private router: Router,
+              private mobileService: MobileService) {
     this.forms = mobileService.getProjectForms(mobileService.currentProject.id);
   }
 
@@ -17,10 +19,16 @@ export class FormSelectorPage implements OnInit {
   }
 
   public formClicked(form: any) {
-    alert(form.name);
+    this.mobileService.setViewForm(form);
+    this.router.navigateByUrl('form-viewer');
   }
 
   public sitesClicked() {
+    this.router.navigateByUrl('site-viewer');
     return;
+  }
+
+  public uploadClicked() {
+    this.router.navigateByUrl('upload');
   }
 }
