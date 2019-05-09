@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MobileService } from '../shared/services/mobile.service';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { from } from 'rxjs';
 
 
 @Component({
@@ -12,7 +13,7 @@ import { Router } from '@angular/router';
 export class ProjectSelectorPage implements OnInit {
 
   private clickedStatus = {};
-  private loading: Promise<any>;
+  private loading: any;
 
   constructor(private loadingCtrl: LoadingController, private alertController: AlertController,
               private router: Router, public mobileState: MobileService) {
@@ -20,21 +21,26 @@ export class ProjectSelectorPage implements OnInit {
 
   ngOnInit() {}
 
-  public projectGo(project: any) {
+  private async presentLoading(config?: any): Promise<any> {
+    this.loading = await this.loadingCtrl.create(config);
+    return await this.loading.present();
+  }
+
+  public async projectGo(project: any) {
     this.mobileState.currentProject = project;
-    this.loading = this.loadingCtrl.create({
-      message: 'Loading forms for this project ...'
-    });
-    this.loading.then( (formControl) => {
+    from (this.presentLoading({
+      message: 'Loading forms for this project ...',
+      // duration: 500
+    })).subscribe( () => {
       this.mobileState.getForms(project).subscribe(
-        (forms) => {
+        async (forms) => {
           console.log('forms', forms);
           this.mobileState.setProjectForms(project.id, forms);
+          await this.loading.dismiss();
           this.router.navigateByUrl('/form-selector');
         }, (err) => {
-          console.log('err', err);
         });
-    }, (err) => {});
+    });
     return;
   }
 
@@ -59,10 +65,11 @@ export class ProjectSelectorPage implements OnInit {
         }, 200);
       } else {
         setTimeout(async () => {
-          this.loading = this.loadingCtrl.create({
-            message: 'Caching projects for offline use ...'
+          this.loading = await this.loadingCtrl.create({
+            message: 'Caching projects for offline use ...',
+            duration: 2000
           });
-          this.loading.then( (ok) => {});
+          await this.loading.present();
           // TODO: perform caching action here
         }, 200);
         // Now we are clear to go offline
