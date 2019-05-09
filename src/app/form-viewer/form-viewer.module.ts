@@ -1,10 +1,15 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import {
-  MatButtonModule, MatCardModule, MatCheckboxModule, MatIconModule,
-  MatMenuModule, MatSelectModule, MatToolbarModule
+  MatButtonModule,
+  MatCardModule,
+  MatCheckboxModule,
+  MatIconModule,
+  MatMenuModule,
+  MatSelectModule,
+  MatToolbarModule
 } from '@angular/material';
 import { IonicModule } from '@ionic/angular';
 
@@ -15,8 +20,6 @@ import {
   MaterialDesignFrameworkModule,
   NoFrameworkModule
 } from 'angular6-json-schema-form';
-import { JsonSchemaFormModule } from '../../../node_modules/angular6-json-schema-form/lib/json-schema-form.module';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 const routes: Routes = [
   {
@@ -43,3 +46,5 @@ const routes: Routes = [
   declarations: [FormViewerPage]
 })
 export class FormViewerPageModule {}
+
+// FIXME: remove unused frameworks
