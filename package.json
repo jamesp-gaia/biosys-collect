@@ -59,7 +59,9 @@
         "rxjs-compat": "^6.4.0",
         "tableschema": "^1.9.1",
         "zone.js": "~0.8.29",
-        "@ionic-native/dialogs": "latest"
+        "@ionic-native/dialogs": "latest",
+        "@ionic-native/file-path": "latest",
+        "@ionic-native/file-transfer": "latest"
     },
     "browser": {
         "fs": false,
