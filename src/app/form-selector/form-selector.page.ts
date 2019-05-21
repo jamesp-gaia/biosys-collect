@@ -12,7 +12,14 @@ export class FormSelectorPage implements OnInit {
 
   constructor(private router: Router,
               private mobileService: MobileService) {
-    this.forms = mobileService.getProjectForms(mobileService.currentProject.id);
+    const forms = mobileService.getProjectForms(mobileService.currentProject.id);
+    this.forms = [];
+    for (const key in forms) {
+      if (key) {
+        console.log('formform', JSON.stringify(forms[key]));
+        this.forms.push(forms[key]);
+      }
+    }
   }
 
   ngOnInit() {

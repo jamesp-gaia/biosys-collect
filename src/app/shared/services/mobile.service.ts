@@ -51,8 +51,9 @@ export class MobileService extends APIService {
   }
 
   public getForms(project: any): Observable<any> {
+    // this.buildAbsoluteUrl('forms/?dataset__project=' + project.id.toString(), false)
     return this.httpClient.get(
-      this.buildAbsoluteUrl('forms/?dataset__project=' + project.id.toString(), false)
+      this.buildAbsoluteUrl('form-hierarchy/?project=' + project.id.toString(), false)
       , {
         headers: new HttpHeaders({
           'authorization': 'token ' + localStorage.getItem('auth_token')
@@ -74,5 +75,75 @@ export class MobileService extends APIService {
   }
   public getViewForm() {
     return this._viewingForm;
+  }
+
+  public getForm2(tableSchema: any) {
+    const jsonSchema = {
+      'type': 'object',
+      'properties': {},
+      'required': []
+    };
+
+    const layout = [];
+
+    // const actualSchema = tableSchema['resources'][0]['schema'];
+    const actualSchema = tableSchema;
+
+    for (const i of actualSchema.fields) {
+      if (i == null) {
+        continue;
+      }
+
+      const field = i;
+      console.log('considering field: ' + field.name);
+      let currentLayout = null;
+      jsonSchema.properties[field.name] = {
+        'type': field.type
+
+      };
+      if (field['format'] != null) {
+        jsonSchema.properties[field.name].format = field['format'];
+
+      }
+      if (field.type === 'datetime') {
+        jsonSchema.properties[field.name].type = 'string';
+        jsonSchema.properties[field.name].format = 'date-time';
+      }
+      if (field['constraints'] != null) {
+        if (field.constraints['required'] === true) {
+          jsonSchema.required.push(field.name);
+        }
+        if (field.constraints['enum'] != null) {
+          jsonSchema.properties[field.name]['enum'] = [...field.constraints['enum']];
+        }
+        if (field.constraints['min'] != null) {
+          jsonSchema.properties[field.name]['minimum'] = field.constraints['min'];
+        }
+        if (field.constraints['max'] != null) {
+          jsonSchema.properties[field.name]['maximum'] = field.constraints['max'];
+        }
+      }
+      if (field['title'] != null) {
+        if (currentLayout === null) {
+          currentLayout = {'key': field.name};
+        }
+        currentLayout['title'] = field['title'];
+
+      }
+      if (field['description'] != null) {
+        if (currentLayout === null) {
+          currentLayout = {'key': field.name};
+        }
+        currentLayout['placeholder'] = field['description'];
+      }
+
+      if (currentLayout !== null) {
+        layout.push(currentLayout);
+      }
+    }
+
+    console.log('final schema:');
+    console.log(JSON.stringify(jsonSchema));
+    return jsonSchema;
   }
 }
