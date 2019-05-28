@@ -15,6 +15,7 @@ import { APIService } from './biosys-core/services/api.service';
 import { HttpClientModule } from '@angular/common/http';
 import { MobileService } from './shared/services/mobile.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -34,7 +35,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     UploadService,
     APIService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    MobileService
+    MobileService,
+    Geolocation,
   ],
   bootstrap: [AppComponent]
 })

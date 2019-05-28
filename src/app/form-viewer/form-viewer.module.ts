@@ -20,6 +20,7 @@ import {
   MaterialDesignFrameworkModule,
   NoFrameworkModule
 } from 'angular6-json-schema-form';
+import { Geolocation } from '@ionic-native/geolocation';
 
 const routes: Routes = [
   {
@@ -43,7 +44,9 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes),
   ],
-  declarations: [FormViewerPage]
+  declarations: [FormViewerPage],
+  providers: [
+  ]
 })
 export class FormViewerPageModule {}
 

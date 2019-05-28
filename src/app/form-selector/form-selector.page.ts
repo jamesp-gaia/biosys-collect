@@ -20,6 +20,7 @@ export class FormSelectorPage implements OnInit {
 
   public formClicked(form: any) {
     this.mobileService.setViewForm(form);
+    this.mobileService.formEditData = null;
     this.router.navigateByUrl('form-viewer');
   }
 

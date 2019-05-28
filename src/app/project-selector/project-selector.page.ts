@@ -3,9 +3,8 @@ import { MobileService } from '../shared/services/mobile.service';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { from } from 'rxjs';
-import { FilePath } from '@ionic-native/file-path/ngx';
-import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer';
-
+// import { FilePath } from '@ionic-native/file-path/ngx';
+// import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer';
 
 @Component({
   selector: 'app-project-selector',
@@ -19,7 +18,8 @@ export class ProjectSelectorPage implements OnInit {
 
   constructor(private loadingCtrl: LoadingController, private alertController: AlertController,
               private router: Router, public mobileState: MobileService,
-              private file: FilePath) {
+              // private file: FilePath
+              ) {
   }
 
   ngOnInit() {}
@@ -37,8 +37,15 @@ export class ProjectSelectorPage implements OnInit {
     })).subscribe( () => {
       this.mobileState.getForms(project).subscribe(
         async (forms) => {
-          console.log('forms', forms);
-          this.mobileState.setProjectForms(project.id, forms);
+          const theForms = [];
+          for (const i in forms) {
+            if (parseInt(i, 10) && i) {
+              const form = forms[i];
+              form['form_id'] = parseInt(i, 10);
+              theForms.push(form);
+            }
+          }
+          this.mobileState.setProjectForms(project.id, theForms);
           await this.loading.dismiss();
           this.router.navigateByUrl('/form-selector');
         }, (err) => {
@@ -47,8 +54,8 @@ export class ProjectSelectorPage implements OnInit {
     return;
   }
 
-  public projectToggle(project: any, isChecked: boolean) {
-    this.clickedStatus[project.name] = isChecked;
+  public projectToggle(project: any) {
+    this.clickedStatus[project.name] = !this.clickedStatus[project.name];
     return;
   }
 
@@ -80,16 +87,16 @@ export class ProjectSelectorPage implements OnInit {
           await this.loading.dismiss();
 
           // now iterate through and find mbtiles:
-          for (const proj in this.mobileState.projects) {
+          for (const proj of this.mobileState.projects) {
             if (this.clickedStatus[proj]) {
               this.loading = await this.loadingCtrl.create({
                 message: 'Loading MBtile for ' + proj.name,
                 duration: 2000
               });
 
-              const url = proj.attributes.mbtile;
-              console.log('mbtile_url', url);
-              this.file.resolveNativePath()
+              // const url = proj.attributes.mbtile;
+              // console.log('mbtile_url', url);
+              // this.file.resolveNativePath()
               //
               return;
             }

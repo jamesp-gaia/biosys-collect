@@ -8,7 +8,7 @@
     <ion-virtual-scroll [items]="mobileState.projects">
         <ion-item *virtualItem="let item">
             <ion-item lines="none" *ngIf="!mobileState.offline">
-                <ion-checkbox (click)="projectToggle(item, checked)" slot="start"></ion-checkbox>
+                <ion-checkbox (click)="projectToggle(item)" slot="start"></ion-checkbox>
             </ion-item>
             <ion-item lines="none" (click)="projectGo(item)">
                 <ion-label style="color: black">{{item.name}}</ion-label>
@@ -31,7 +31,7 @@
                     [color]="mobileState.offline ? 'success' : 'danger'"
                     style="width: 100%; padding: 5pt"
                     size="large"
-                    expand="block">{{mobileState.offline ? 'Go Online' : 'Go Offline'}}</ion-button>
+                    expand="block">{{mobileState.offline ? 'Go Online' : 'Download & Go Offline'}}</ion-button>
         </ion-item>
     </ion-item-group>
 </ion-content>
