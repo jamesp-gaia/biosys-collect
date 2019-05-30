@@ -34,5 +34,6 @@ export class SiteViewerPage implements OnInit {
   }
 
   addSite() {
+    this.router.navigateByUrl('site-add');
   }
 }

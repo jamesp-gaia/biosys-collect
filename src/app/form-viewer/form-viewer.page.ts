@@ -9,6 +9,7 @@ import * as moment from 'moment/moment';
 import { Geolocation, Geoposition } from '@ionic-native/geolocation/ngx';
 import { UUID } from 'angular2-uuid';
 import { Observable, Subscription } from 'rxjs';
+import { GEOLOCATION_MAX_AGE, GEOLOCATION_TIMEOUT } from '../shared/utils/consts';
 
 @Component({
   selector: 'app-form-viewer',
@@ -16,9 +17,6 @@ import { Observable, Subscription } from 'rxjs';
   styleUrls: ['./form-viewer.page.scss'],
 })
 export class FormViewerPage implements OnDestroy {
-  public static readonly GEOLOCATION_TIMEOUT = 5000;
-  public static readonly GEOLOCATION_MAX_AGE = 1000;
-
   public schemaSchema: any;
   public formSchema: any;
   public formData: any;
@@ -75,8 +73,8 @@ export class FormViewerPage implements OnDestroy {
 
     const watchOptions: PositionOptions = {
       enableHighAccuracy: true,
-      maximumAge: FormViewerPage.GEOLOCATION_MAX_AGE,
-      timeout: FormViewerPage.GEOLOCATION_TIMEOUT,
+      maximumAge: GEOLOCATION_MAX_AGE,
+      timeout: GEOLOCATION_TIMEOUT,
     };
     this.locationObservable = this.geolocation.watchPosition(watchOptions);
     this.locationSubscription = this.locationObservable.subscribe( (position) => {

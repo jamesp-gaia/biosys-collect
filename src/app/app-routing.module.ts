@@ -17,6 +17,7 @@ const routes: Routes = [
   { path: 'site-viewer',      loadChildren: './site-viewer/site-viewer.module#SiteViewerPageModule' },
   { path: 'site-view',        loadChildren: './site-viewer/site-viewer.module#SiteViewerPageModule' },
   { path: 'upload', loadChildren: './upload/upload.module#UploadPageModule' },
+  { path: 'site-add', loadChildren: './site-add/site-add.module#SiteAddPageModule' },
 ];
 
 @NgModule({
