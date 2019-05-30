@@ -86,7 +86,6 @@ export class UploadPage implements OnInit {
   }
 
   private markerClicked(marker: Marker, x: any) {
-    alert(x.client_id);
     const project = this.mobileService.currentProject;
     const forms = this.mobileService.getProjectForms(project.id);
     console.log('editforms', forms);
@@ -110,7 +109,8 @@ export class UploadPage implements OnInit {
     });
     await foo.present();
     this.storageService.getUploadableRecords().subscribe( (x) => {
-      if (x.data.location.latitude && x.data.location.longitude) {
+      if (x.valid) {
+        delete x.data.location;
         this.apiService.createRecord(x, false).subscribe(async (value) => {
           console.log('upload', x.client_id);
           this.markers[x.client_id].remove();

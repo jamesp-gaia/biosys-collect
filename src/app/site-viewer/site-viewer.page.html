@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Sites {{mobileState.currentProject.name}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-virtual-scroll [items]="sites">
+        <ion-item *virtualItem="let item">
+            <ion-label>
+                <h2>{{item.code}}: {{item.name}}</h2>
+                <p>{{item.description}}</p>
+            </ion-label>
+        </ion-item>
+    </ion-virtual-scroll>
+</ion-content>
+
+<ion-footer>
+    <div style="text-align: center">
+        <ion-button fab style="width: 90%" (click)="addSite()" block class="fs-view-sites">Add Site</ion-button>
+    </div>
+</ion-footer>

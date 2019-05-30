@@ -15,16 +15,10 @@
             </ion-item>
         </ion-item>
     </ion-virtual-scroll>
+</ion-content>
 
+<ion-footer>
     <ion-item-group>
-        <!--<ion-item *ngIf="!mobileState.offline">-->
-            <!--<ion-button-->
-                    <!--(click)="upload()"-->
-                    <!--color="warning"-->
-                    <!--style="width: 100%; padding: 5pt"-->
-                    <!--size="large"-->
-                    <!--expand="block">Upload</ion-button>-->
-        <!--</ion-item>-->
         <ion-item>
             <ion-button
                     (click)="offlineToggle()"
@@ -34,4 +28,4 @@
                     expand="block">{{mobileState.offline ? 'Go Online' : 'Download & Go Offline'}}</ion-button>
         </ion-item>
     </ion-item-group>
-</ion-content>
+</ion-footer>
