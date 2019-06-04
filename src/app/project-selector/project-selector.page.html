@@ -21,11 +21,12 @@
     <ion-item-group>
         <ion-item>
             <ion-button
+                    text-wrap
                     (click)="offlineToggle()"
                     [color]="mobileState.offline ? 'success' : 'danger'"
-                    style="width: 100%; padding: 5pt"
+                    style="width: 100%; padding: 5pt;"
                     size="large"
-                    expand="block">{{mobileState.offline ? 'Go Online' : 'Download & Go Offline'}}</ion-button>
+                    expand="block">{{mobileState.offline ? 'Go Online' : "Download & Go Offline"}}</ion-button>
         </ion-item>
     </ion-item-group>
 </ion-footer>

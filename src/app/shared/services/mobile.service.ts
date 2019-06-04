@@ -3,6 +3,7 @@ import { APIService } from '../../biosys-core/services/api.service';
 import { catchError } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Project, Site } from '../../biosys-core/interfaces/api.interfaces';
 
 // Something to hold global state that is needed across the app.
 
@@ -163,4 +164,5 @@ export class MobileService extends APIService {
   public get formEditData() {
     return this._formEditData;
   }
+
 }

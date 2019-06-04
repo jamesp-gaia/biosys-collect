@@ -104,10 +104,10 @@ export class UploadPage implements OnInit {
   }
 
   async uploadClicked() {
-    const foo = await this.loadingCtrl.create({
+    const uploadSpin = await this.loadingCtrl.create({
       message: 'Uploading data for this project ...',
     });
-    await foo.present();
+    await uploadSpin.present();
     this.storageService.getUploadableRecords().subscribe( (x) => {
       if (x.valid) {
         delete x.data.location;
@@ -116,7 +116,7 @@ export class UploadPage implements OnInit {
           this.markers[x.client_id].remove();
           this.storageService.deleteRecord(x.client_id);
           if (--this.pinCount === 0) {
-            await foo.dismiss();
+            await uploadSpin.dismiss();
             (await this.alertController.create({
               header: 'Upload Complete',
               subHeader: 'Records "uploaded"',
@@ -126,7 +126,7 @@ export class UploadPage implements OnInit {
         }, async (err) => {
           console.log('upErr', err);
           if (--this.pinCount === 0) {
-            await foo.dismiss();
+            await uploadSpin.dismiss();
             (await this.alertController.create({
               header: 'Upload Complete',
               subHeader: 'Records "uploaded"',

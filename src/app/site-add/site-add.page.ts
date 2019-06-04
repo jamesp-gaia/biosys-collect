@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MobileService } from '../shared/services/mobile.service';
 import { Router } from '@angular/router';
 import { Geolocation, Geoposition } from '@ionic-native/geolocation/ngx';
@@ -6,6 +6,9 @@ import { GEOLOCATION_MAX_AGE, GEOLOCATION_TIMEOUT } from '../shared/utils/consts
 import { Observable, Subscription } from 'rxjs';
 import { Site } from '../biosys-core/interfaces/api.interfaces';
 import { APIService } from '../biosys-core/services/api.service';
+import { Location } from '@angular/common';
+import { AlertController, LoadingController } from '@ionic/angular';
+import { SiteViewerPage } from '../site-viewer/site-viewer.page';
 
 @Component({
   selector: 'app-site-add',
@@ -33,8 +36,12 @@ export class SiteAddPage implements OnInit, OnDestroy {
 
   constructor(private mobileState: MobileService,
               private router: Router,
+              private loadingCtrl: LoadingController,
               private geolocation: Geolocation,
-              private apiService: APIService) { }
+              private apiService: APIService,
+              private alertController: AlertController,
+              private pageLocation: Location
+  ) { }
 
   ngOnDestroy() {
     if (this.locationSubscription) {
@@ -42,7 +49,12 @@ export class SiteAddPage implements OnInit, OnDestroy {
     }
   }
 
-  addTheSite() {
+  async addTheSite() {
+    const addSpin = await this.loadingCtrl.create({
+      message: 'Creating Site ...',
+    });
+    await addSpin.present();
+
     const site: Site = {
       code: this.siteCode,
       name: this.siteName,
@@ -56,9 +68,24 @@ export class SiteAddPage implements OnInit, OnDestroy {
         ]
       }
     };
-    this.apiService.createSite(site).subscribe( (x) => {
+    this.apiService.createSite(site).subscribe( async (x) => {
+      await addSpin.dismiss();
+      (await this.alertController.create({
+        header: 'Site Created',
+        buttons: ['Ok']
+      })).present().then( (alert) => {
+        // this.pageLocation.back();
+        this.router.navigateByUrl('site-viewer');
+      });
       return;
-    }, (err) => {
+    }, async (err) => {
+      await addSpin.dismiss();
+      (await this.alertController.create({
+        header: 'Error creating site',
+        subHeader: 'Make sure all fields are filled out and try again.',
+        buttons: ['Ok']
+      })).present().then( (alert2) => {
+      });
       return;
     });
     return;
