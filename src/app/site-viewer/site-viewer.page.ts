@@ -19,18 +19,17 @@ export class SiteViewerPage {
     return;
   }
 
-  async ionViewDidEnter() {
+  async ionViewWillEnter() {
     this.loadSites();
   }
 
 
   private async loadSites() {
     const spinWait = await this.loadingCtrl.create({
-      message: 'Creating Site ...',
+      message: 'Loading Sites ...',
     });
     await spinWait.present();
 
-    console.log('sites');
     this.mobileState.getAllSitesForProjectID(this.mobileState.currentProject.id)
     .subscribe(
       async (stuff) => {

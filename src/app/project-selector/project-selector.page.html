@@ -10,7 +10,7 @@
             <ion-item lines="none" *ngIf="!mobileState.offline">
                 <ion-checkbox (click)="projectToggle(item)" slot="start"></ion-checkbox>
             </ion-item>
-            <ion-item lines="none" (click)="projectGo(item)">
+            <ion-item lines="none" (click)="projectClicked(item)">
                 <ion-label style="color: black">{{item.name}}</ion-label>
             </ion-item>
         </ion-item>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { AlertController, LoadingController, NavController } from '@ionic/angular';
 
 import { from } from 'rxjs';
@@ -6,7 +6,6 @@ import { mergeMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
 import { AuthService } from '../biosys-core/services/auth.service';
-import { Dataset, User } from '../biosys-core/interfaces/api.interfaces';
 import { APIService } from '../biosys-core/services/api.service';
 import { StorageService } from '../shared/services/storage.service';
 import { formatAPIError } from '../biosys-core/utils/functions';
@@ -14,8 +13,9 @@ import { ApiResponse } from '../shared/interfaces/mobile.interfaces';
 
 import { SignUpPage } from '../sign-up/sign-up';
 
-import { PROJECT_NAME, REGO_URL, SIGNUP_TERMS_AND_CONDITIONS_HTML } from '../shared/utils/consts';
+import { REGO_URL, SIGNUP_TERMS_AND_CONDITIONS_HTML } from '../shared/utils/consts';
 import { MobileService } from '../shared/services/mobile.service';
+import { Storage } from '@ionic/storage';
 
 /**
  * Generated class for the LoginPage page.
@@ -28,7 +28,7 @@ import { MobileService } from '../shared/services/mobile.service';
   selector: 'page-login',
   templateUrl: 'login.html',
 })
-export class LoginPage implements OnInit {
+export class LoginPage {
   public REGO_URL = REGO_URL;
   private dialog: any;
   private loading: any;
@@ -40,7 +40,8 @@ export class LoginPage implements OnInit {
               private loadingCtrl: LoadingController,
               private navCtrl: NavController,
               private router: Router,
-              private mobileState: MobileService) {
+              private mobileState: MobileService,
+              private storage: Storage) {
   }
 
 
@@ -79,6 +80,11 @@ export class LoginPage implements OnInit {
     console.log('current', this.mobileState.offline);
     if (this.mobileState.offline === true) {
       console.log('login-ok', 'is offline');
+      this.storage.get('projects').then( (projects) => {
+        // FIXME: convert string to json blob
+        this.mobileState.projects = JSON.parse(projects);
+        this.router.navigateByUrl('/project-selector');
+      });
       return;
     } else {
       this.apiService.getProjects({}).subscribe((result) => {
@@ -182,10 +188,13 @@ export class LoginPage implements OnInit {
     })).present();
   }
 
-  ngOnInit(): void {
+  ionViewWillEnter() {
+    console.log('ionviewwillenter');
     if (localStorage.getItem('auth_token') !== null) {
       console.log('token', localStorage.getItem('auth_token'));
-      this.loginOK();
+      setTimeout( () => {
+        this.loginOK();
+      }, 500);
     } else {
       console.log('token', 'no');
     }

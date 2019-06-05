@@ -3,7 +3,7 @@ import { APIService } from '../../biosys-core/services/api.service';
 import { catchError } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Project, Site } from '../../biosys-core/interfaces/api.interfaces';
+import { Storage } from '@ionic/storage';
 
 // Something to hold global state that is needed across the app.
 
@@ -11,7 +11,7 @@ import { Project, Site } from '../../biosys-core/interfaces/api.interfaces';
 export class MobileService extends APIService {
   private _projects: any; // TODO: make interface
 
-  private _offline: boolean;
+  private _offline = false;
 
   private _projectCurrent: any;
 
@@ -21,24 +21,52 @@ export class MobileService extends APIService {
 
   private _formEditData: any;
 
-  constructor(@Inject(HttpClient) httpClient) {
+  constructor(@Inject(HttpClient) httpClient, private storage: Storage) {
     super(httpClient);
-    this._offline = false;
+    storage.get('offline').then ((value) => {
+      this._offline = value;
+      console.log('offline-reload', this._offline);
+    });
   }
 
   public get offline(): boolean {
-    return this._offline || false;
+    return this._offline;
   }
 
   public set offline(state: boolean) {
     this._offline = state;
-    // localStorage.setItem('offline', this._offline.toString());
+    this.storage.set('offline', state);
   }
 
-  public offlineToggle() {
-    this._offline = !this.offline;
-    // localStorage.setItem('offline', this._offline.toString());
-    return this._offline;
+  public offlineGo(projects: any) {
+    // the big fat "go offline" method
+
+    const newProjects = [];
+
+    // first up, update this._projects to only have the projects we are caching
+    for (const theProject of this._projects) {
+      if (theProject['id']) {
+        for (const projectID in projects) {
+          if (Number(projectID) === theProject.id) {
+            newProjects.push(theProject);
+            this.getForms(theProject).subscribe( (forms) => {
+              this.storage.set('Project' + theProject.id + '_Forms', forms);
+              this.setProjectForms(theProject.id, forms);
+              console.log('formsCache', forms);
+            });
+          }
+        }
+      }
+    }
+    this._projects = newProjects;
+    // now save it:
+    this.storage.set('projects', JSON.stringify(newProjects));
+
+    // now recursively download forms:
+    // this.mobileState.getForms(project).subscribe(
+
+    // TODO: insert tile download workflow code here
+    return;
   }
 
   public get projects(): any {

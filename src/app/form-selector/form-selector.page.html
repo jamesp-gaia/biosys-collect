@@ -13,5 +13,5 @@
 </ion-content>
 <ion-footer>
     <ion-button (click)="sitesClicked()" block class="fs-view-sites">Sites</ion-button>
-    <ion-button (click)="uploadClicked()" block class="fs-view-sites">Upload</ion-button>
+    <ion-button *ngIf="!offline" (click)="uploadClicked()" block class="fs-view-sites">Upload</ion-button>
 </ion-footer>

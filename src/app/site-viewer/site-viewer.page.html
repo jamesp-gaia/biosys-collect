@@ -15,7 +15,7 @@
     </ion-virtual-scroll>
 </ion-content>
 
-<ion-footer>
+<ion-footer *ngIf="!mobileState.offline">
     <div style="text-align: center">
         <ion-button fab style="width: 90%" (click)="addSite()" block class="fs-view-sites">Add Site</ion-button>
     </div>

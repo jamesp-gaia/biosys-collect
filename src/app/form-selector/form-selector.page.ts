@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 })
 export class FormSelectorPage implements OnInit {
   public forms: any;
+  public offline: boolean;
 
   constructor(private router: Router,
               private mobileService: MobileService) {
@@ -16,6 +17,7 @@ export class FormSelectorPage implements OnInit {
   }
 
   ngOnInit() {
+    this.offline = this.mobileService.offline;
   }
 
   public formClicked(form: any) {
