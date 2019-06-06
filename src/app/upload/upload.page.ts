@@ -63,6 +63,7 @@ export class UploadPage implements OnInit {
   private populateMarkers(map: GoogleMap) {
     this.storageService.getUploadableRecords().subscribe( (x) => {
       console.log('popok', x);
+      // TODO: filter by project / dataset
       if (x.data.location.latitude && x.data.location.longitude) {
         const marker = map.addMarkerSync({
           title: x.datetime,
@@ -104,6 +105,7 @@ export class UploadPage implements OnInit {
   }
 
   async uploadClicked() {
+    // TODO: filter by project / dataset
     const uploadSpin = await this.loadingCtrl.create({
       message: 'Uploading data for this project ...',
     });

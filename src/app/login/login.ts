@@ -81,7 +81,9 @@ export class LoginPage {
     if (this.mobileState.offline === true) {
       console.log('login-ok', 'is offline');
       this.storage.get('projects').then( (projects) => {
-        // FIXME: convert string to json blob
+        if (this.loading) {
+          this.loading.dismiss();
+        }
         this.mobileState.projects = JSON.parse(projects);
         this.router.navigateByUrl('/project-selector');
       });

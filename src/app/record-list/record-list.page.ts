@@ -22,6 +22,7 @@ export class RecordListPage implements OnInit {
     setTimeout (() => {
       const theResults = [];
       this.storageService.getUploadableRecords().subscribe((x) => {
+        // TODO: filter by project / dataset
         console.log('popok', x);
         theResults.push(x);
       }, () => {}, () => {
