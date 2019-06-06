@@ -189,9 +189,7 @@ export class LoginPage {
   }
 
   ionViewWillEnter() {
-    console.log('ionviewwillenter');
     if (localStorage.getItem('auth_token') !== null) {
-      console.log('token', localStorage.getItem('auth_token'));
       setTimeout( () => {
         from(this.presentLoading({
           message: 'Logging in...'
@@ -201,7 +199,8 @@ export class LoginPage {
         });
       }, 500);
     } else {
-      console.log('token', 'no');
+      return;
     }
+    return;
   }
 }
