@@ -100,7 +100,7 @@ export class ProjectSelectorPage {
       }
     } else {
       this.mobileState.offline = false;
-      this.pageLocation.back();
+      this.router.navigateByUrl('/');
     }
     return;
   }

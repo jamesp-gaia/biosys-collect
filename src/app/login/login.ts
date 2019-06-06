@@ -193,7 +193,12 @@ export class LoginPage {
     if (localStorage.getItem('auth_token') !== null) {
       console.log('token', localStorage.getItem('auth_token'));
       setTimeout( () => {
-        this.loginOK();
+        from(this.presentLoading({
+          message: 'Logging in...'
+        }))
+        .subscribe(() =>  {
+          this.loginOK();
+        });
       }, 500);
     } else {
       console.log('token', 'no');
