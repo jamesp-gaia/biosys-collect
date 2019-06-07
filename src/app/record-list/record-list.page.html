@@ -1,0 +1,15 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Records</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-virtual-scroll [items]="records">
+        <ion-item (click)="clicked(item);" *virtualItem="let item">
+            <ion-label>
+                <h2>{{item.datetime}}</h2>
+            </ion-label>
+        </ion-item>
+    </ion-virtual-scroll>
+</ion-content>

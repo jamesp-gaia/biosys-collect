@@ -19,14 +19,24 @@
                 </ion-col>
             </ion-row>
             <ion-row>
-                <ion-col size="7" size-lg="4" size-md="4" offset-md="4" offset-lg="4" offset="3">
-                    <ion-button width="100%" type="submit" [disabled]="form.invalid" type="submit" expand="block"
+                <ion-col size="8" size-lg="6" size-md="6" offset-md="2" offset-lg="2" offset="2">
+                    <ion-button
+                            width="100%"
+                            type="submit"
+                            [disabled]="form.invalid"
+                            type="submit"
+                            expand="block"
                             (click)="login(form, username.value, password.value)">Log in</ion-button>
                 </ion-col>
             </ion-row>
             <ion-row>
-                <ion-col size="7" size-lg="4" size-md="4" offset-md="4" offset-lg="4" offset="3">
-                    <ion-button width="100%" type="submit" expand="block" (click)="resetPassword()">Forgotten Password?</ion-button>
+                <ion-col size="8" size-lg="6" size-md="6" offset-md="2" offset-lg="2" offset="2">
+                    <ion-button
+                            text-wrap
+                            width="100%"
+                            type="submit"
+                            expand="block"
+                            (click)="resetPassword()">Forgotten Password?</ion-button>
                 </ion-col>
             </ion-row>
         </form>

@@ -1,16 +1,15 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>{{formSchema.name}}</ion-title>
+    <ion-title>{{schemaSchema.name}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content [scrollEvents]="true" [scrollY]="true">
     <json-schema-form
             style="height: 100%; width: 90%; left: 5%"
             loadExternalAssets="true"
-            [schema]="formSchema.layout"
+            [form]="formParameters"
             framework="bootstrap-4"
-            (onChanges)="onChanges($event)"
             (onSubmit)="onSubmit($event)"
             (isValid)="isValid($event)"
             (validationErrors)="validationErrors($event)">
