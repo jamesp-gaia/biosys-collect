@@ -18,6 +18,9 @@ export let REGO_URL = 'http://www.environment.nsw.gov.au/atlaspublicapp/Registra
 
 export let TOAST_DURATION = 3000;
 
+export let GEOLOCATION_TIMEOUT = 5000;
+export let GEOLOCATION_MAX_AGE = 1000;
+
 export let UPDATE_BUTTON_NAME = 'Use Current Location';
 
 export let SIGNUP_TERMS_AND_CONDITIONS_HTML_OLD =
