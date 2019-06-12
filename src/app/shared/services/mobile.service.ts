@@ -88,6 +88,7 @@ export class MobileService extends APIService {
   public getForms(project: any): Observable<any> {
     return this.httpClient.get(
       this.buildAbsoluteUrl('form-hierarchy/?project=' + project.id.toString(), false)
+      // this.buildAbsoluteUrl('form-hierarchy/', false)
       , {
         headers: new HttpHeaders({
           'authorization': 'token ' + localStorage.getItem('auth_token')

@@ -69,7 +69,10 @@ export class FormViewerPage implements OnDestroy {
     console.log('formGenScheme', JSON.stringify(this.formSchema));
 
     this.formParameters['schema'] = this.formSchema.jsonSchema;
-    this.formParameters['layout'] = this.formSchema.layout;
+    this.formParameters['layout'] = this.schemaSchema.layout;
+
+    console.log('formview', this.formParameters);
+    console.log('formview', JSON.stringify(this.formParameters));
 
     const watchOptions: PositionOptions = {
       enableHighAccuracy: true,
