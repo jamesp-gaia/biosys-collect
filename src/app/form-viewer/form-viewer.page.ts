@@ -172,7 +172,7 @@ export class FormViewerPage implements OnDestroy {
   }
 
   isValid(isValid: boolean): void {
-    this.formIsValid = isValid || true;
+    this.formIsValid = isValid;
   }
 
   getFieldTitle(titlePath: string): string {
