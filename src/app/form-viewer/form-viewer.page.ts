@@ -110,6 +110,14 @@ export class FormViewerPage implements OnDestroy {
   }
 
   onChange(event) {
+    for (const parameter in this.formParameters['schema']['properties']) {
+      if (this.formParameters['schema']['properties'][parameter]['format'] === 'date-time' ||
+        this.formParameters['schema']['properties'][parameter]['format'] === 'datetime') {
+        if (this.data[parameter].endsWith('Z')) {
+          this.data[parameter] = this.data[parameter].replace('Z', '');
+        }
+      }
+    }
     return;
   }
 
