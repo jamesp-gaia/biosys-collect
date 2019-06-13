@@ -10,6 +10,8 @@
             loadExternalAssets="true"
             [form]="formParameters"
             framework="bootstrap-4"
+            [(data)]="data"
+            (onChanges)="onChange($event)"
             (onSubmit)="onSubmit($event)"
             (isValid)="isValid($event)"
             (validationErrors)="validationErrors($event)">

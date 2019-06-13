@@ -11,9 +11,35 @@ export class FormSelectorPage implements OnInit {
   public forms: any;
   public offline: boolean;
 
+  public indentedForms: any;
+
   constructor(private router: Router,
               private mobileService: MobileService) {
     this.forms = mobileService.getProjectForms(mobileService.currentProject.id);
+    this.indentedForms = [];
+    for (const key of this.forms) {
+      this.indentedForms.push({
+        form: key,
+        indentation: 0
+      });
+      for (const childrenKeys of key['children']) {
+        this.indentedForms.push({
+          form: childrenKeys,
+          indentation: 1
+        });
+      }
+    }
+  }
+
+  public itemName(form: any) {
+    const indent = '    ';
+    let rv = '';
+    for (let i = 0; i < form.indentation; i++) {
+      rv += indent;
+    }
+    rv += form.form.name;
+    console.log('item', rv);
+    return rv;
   }
 
   ngOnInit() {

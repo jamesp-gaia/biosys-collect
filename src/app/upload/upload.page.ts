@@ -89,15 +89,19 @@ export class UploadPage implements OnInit {
   private markerClicked(marker: Marker, x: any) {
     const project = this.mobileService.currentProject;
     const forms = this.mobileService.getProjectForms(project.id);
-    console.log('editforms', forms);
     let form;
     for (const i of forms) {
       if (i.dataset === x.dataset) {
         form = i;
+        break;
+      }
+      for (const child of i['children']) {
+        if (child.dataset === x.dataset) {
+          form = child;
+          break;
+        }
       }
     }
-    console.log('editform', form);
-    console.log('editdata', x); // FIXME
     this.mobileService.setViewForm(form);
     this.mobileService.formEditData = x;
     this.router.navigateByUrl('form-viewer');
@@ -114,7 +118,6 @@ export class UploadPage implements OnInit {
       if (x.valid) {
         delete x.data.location;
         this.apiService.createRecord(x, false).subscribe(async (value) => {
-          console.log('upload', x.client_id);
           this.markers[x.client_id].remove();
           this.storageService.deleteRecord(x.client_id);
           if (--this.pinCount === 0) {
@@ -126,7 +129,6 @@ export class UploadPage implements OnInit {
             })).present();
           }
         }, async (err) => {
-          console.log('upErr', err);
           if (--this.pinCount === 0) {
             await uploadSpin.dismiss();
             (await this.alertController.create({
