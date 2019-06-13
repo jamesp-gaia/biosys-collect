@@ -32,6 +32,8 @@ export class FormViewerPage implements OnDestroy {
   private locationSubscription: Subscription;
   private isEdit = false;
 
+  private data = {};
+
   public formParameters = {
     // https://github.com/hamzahamidi/angular6-json-schema-form#readme
     /* Single-input mode
@@ -61,6 +63,7 @@ export class FormViewerPage implements OnDestroy {
     if (this.formRecord) {
       this.isEdit = true;
       this.formData = this.formRecord.data;
+      this.data = this.formRecord.data;
       this.formParameters['data'] = this.formRecord.data;
     }
 
@@ -69,7 +72,9 @@ export class FormViewerPage implements OnDestroy {
     console.log('formGenScheme', JSON.stringify(this.formSchema));
 
     this.formParameters['schema'] = this.formSchema.jsonSchema;
-    this.formParameters['layout'] = this.schemaSchema.layout;
+    if (!this.schemaSchema.layout.hasOwnProperty('test')) {
+      this.formParameters['layout'] = this.schemaSchema.layout;
+    }
 
     console.log('formview', this.formParameters);
     console.log('formview', JSON.stringify(this.formParameters));
@@ -90,6 +95,7 @@ export class FormViewerPage implements OnDestroy {
         this.coordinates.altitudeAccuracy = position.coords.altitudeAccuracy;
         this.coordinates.heading = position.coords.heading;
         this.coordinates.speed = position.coords.speed;
+        this.updateLocationFields();
       }
     }, (error) => {
       console.log('gps_err', error);
@@ -101,6 +107,10 @@ export class FormViewerPage implements OnDestroy {
     if (this.locationSubscription) {
       this.locationSubscription.unsubscribe();
     }
+  }
+
+  onChange(event) {
+    return;
   }
 
   onSubmit(data: any) {
@@ -154,7 +164,7 @@ export class FormViewerPage implements OnDestroy {
   }
 
   isValid(isValid: boolean): void {
-    this.formIsValid = isValid;
+    this.formIsValid = isValid || true;
   }
 
   getFieldTitle(titlePath: string): string {
@@ -186,35 +196,27 @@ export class FormViewerPage implements OnDestroy {
   }
 
   public updateLocationFields(initialUpdate = false) {
-    // if (!this.lastLocation) {
-    //   // prevent showing this popup immediately upon showing form the first time
-    //   if (!initialUpdate) {
-    //     this.alertCtrl.create({
-    //       title: 'Location unavailable',
-    //       buttons: ['OK']
-    //     }).present();
-    //   }
-    //   return;
-    // }
-    //
-    // const valuesToPatch = {};
-    //
-    // if (this.form.contains('Latitude')) {
-    //   valuesToPatch['Latitude'] = this.lastLocation.coords.latitude.toFixed(6);
-    // }
-    //
-    // if (this.form.contains('Longitude')) {
-    //   valuesToPatch['Longitude'] = this.lastLocation.coords.longitude.toFixed(6);
-    // }
-    //
-    // if (this.form.contains('Accuracy')) {
-    //   valuesToPatch['Accuracy'] = Math.round(this.lastLocation.coords.accuracy);
-    // }
-    //
-    // if (this.form.contains('Altitude')) {
-    //   valuesToPatch['Altitude'] = Math.round(this.lastLocation.coords.altitude);
-    // }
-    //
-    // this.form.patchValue(valuesToPatch);
+    console.log('schema', this.formParameters);
+    console.log('data', this.data);
+    if (!this.formParameters || !Object.keys(this.data).length ) {
+      return;
+    }
+    if (this.formParameters['schema']['properties'].hasOwnProperty('Latitude')) {
+      console.log('haslat', 'yes');
+      this.data['Latitude'] = this.coordinates.latitude.toFixed(6);
+    }
+
+    if (this.formParameters['schema']['properties'].hasOwnProperty('Longitude')) {
+      this.data['Longitude'] = this.coordinates.longitude.toFixed(6);
+    }
+
+    if (this.formParameters['schema']['properties'].hasOwnProperty('Accuracy')) {
+      this.data['Accuracy'] = Math.round(this.coordinates.accuracy);
+    }
+
+    if (this.formParameters['schema']['properties'].hasOwnProperty('Altitude')) {
+      this.data['Altitude'] = Math.round(this.coordinates.altitude);
+    }
+    return;
   }
 }

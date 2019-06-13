@@ -94,6 +94,13 @@ export class UploadPage implements OnInit {
     for (const i of forms) {
       if (i.dataset === x.dataset) {
         form = i;
+        break;
+      }
+      for (const child of i['children']) {
+        if (child.dataset === x.dataset) {
+          form = child;
+          break;
+        }
       }
     }
     console.log('editform', form);
