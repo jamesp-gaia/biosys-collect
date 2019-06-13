@@ -15,6 +15,20 @@ import { APIService } from './biosys-core/services/api.service';
 import { HttpClientModule } from '@angular/common/http';
 import { MobileService } from './shared/services/mobile.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { ActivatedRouteSnapshot } from '../../node_modules/@angular/router/src/router_state';
+
+export class CustomReuseStrategy extends IonicRouteStrategy {
+  shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot) {
+    return false;
+  }
+  shouldAttach(route: ActivatedRouteSnapshot) {
+    return false;
+  }
+  shouldDetach(route: ActivatedRouteSnapshot) {
+    return false;
+  }
+}
 
 @NgModule({
   declarations: [AppComponent],
@@ -33,9 +47,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     StorageService,
     UploadService,
     APIService,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    MobileService
+    // { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    { provide: RouteReuseStrategy, useClass: CustomReuseStrategy },
+    MobileService,
+    Geolocation,
   ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
+

@@ -5,13 +5,14 @@
 </ion-header>
 
 <ion-content>
-    <ion-virtual-scroll [items]="forms">
-        <ion-item *virtualItem="let item" (click)="formClicked(item)">
-            <ion-label>{{item.name}}</ion-label>
+    <ion-virtual-scroll [items]="indentedForms">
+        <ion-item *virtualItem="let item" (click)="formClicked(item.form)">
+            <ion-label [style.text-indent]="item.indentation ? '20pt' : '0pt'">{{itemName(item)}}</ion-label>
         </ion-item>
     </ion-virtual-scroll>
-
-
-    <!--<ion-button (click)="sitesClicked()" block class="fs-view-sites">View Sites</ion-button>-->
-    <ion-button (click)="uploadClicked()" block class="fs-view-sites">Upload</ion-button>
 </ion-content>
+<ion-footer>
+    <ion-button (click)="sitesClicked()" block class="fs-view-sites">Sites</ion-button>
+    <ion-button *ngIf="!offline" (click)="uploadClicked()" block class="fs-view-sites">Upload</ion-button>
+    <ion-button *ngIf="offline" (click)="dataViewClicked()" block class="fs-view-sites">Review Data</ion-button>
+</ion-footer>

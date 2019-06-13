@@ -1,506 +1,177 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MobileService } from '../shared/services/mobile.service';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { StorageService } from '../shared/services/storage.service';
+import { ClientRecord } from '../shared/interfaces/mobile.interfaces';
+import * as moment from 'moment/moment';
+import { Geolocation, Geoposition } from '@ionic-native/geolocation/ngx';
+import { UUID } from 'angular2-uuid';
+import { Observable, Subscription } from 'rxjs';
+import { GEOLOCATION_MAX_AGE, GEOLOCATION_TIMEOUT } from '../shared/utils/consts';
 
 @Component({
   selector: 'app-form-viewer',
   templateUrl: './form-viewer.page.html',
   styleUrls: ['./form-viewer.page.scss'],
 })
-export class FormViewerPage implements OnInit {
+export class FormViewerPage implements OnDestroy {
+  public schemaSchema: any;
   public formSchema: any;
-  private liveFormData: any = {};
+  public formData: any;
+  public formRecord: any;
+
   private formValidationErrors: any;
   private formIsValid = null;
   private submittedFormData: any = null;
-
-  private yourJsonSchema = {
-    'name': 'Testy Test',
-    'layout': {
-      'schema': {
-        'type': 'object',
-        'title': 'This is a test',
-        'properties': {
-          'IndDetectionID': {
-            'title': 'IndDetectionID',
-            'type': 'number',
-            'description': 'IndDetectionID Desc',
-          },
-          'SpeciesID': {
-            'title': 'SpeciesID',
-            'type': 'number',
-            'description': 'SpeciesID desc'
-          },
-          'Species': {
-            'type': 'string',
-            'title': 'Species Test',
-            'enum': [
-              'A',
-              'B',
-              'C'
-            ],
-            'description': 'Species Desc'
-          }
-        },
-        'required': [
-          'IndDetectionID',
-        ],
-        'form': [
-          {
-            'key': 'IndDetectionID',
-            'placeholder': 'IndDetectionID placeholder',
-            'title': 'IndDet Title',
-            'label': 'HelloInd',
-          },
-          {
-            'title': 'Species ID Title',
-            'label': 'Hello',
-            'key': 'SpeciesID',
-            'placeholder': 'Species ID Placeholder'
-          },
-          'Species'
-        ]
-      }
-    }
-  };
-
-  private dataToFormSchemaSchema = {
-    'profile': 'tabular-data-package',
-    'name': 'koala-scat-census',
-    'resources': [
-      {
-        'profile': 'tabular-data-resource',
-        'name': 'klm-sat-census',
-        'encoding': 'utf-8',
-        'format': 'csv',
-        'mediatype': 'text/csv',
-        'path': 'tmp7kgle969.upload',
-        'schema': {
-          'fields': [
-            {
-              'constraints': {
-                'required': true
-              },
-              'type': 'string',
-              'name': 'Census ID',
-              'format': 'default'
-            },
-            {
-              'description': 'Unique site identifier',
-              'format': 'default',
-              'title': 'Site ID',
-              'constraints': {
-                'required': true
-              },
-              'type': 'string',
-              'name': 'SiteNo'
-            },
-            {
-              'constraints': {
-                'enum': [
-                  'Koala Pilot Project'
-                ],
-                'required': true
-              },
-              'type': 'string',
-              'name': 'Survey Name',
-              'format': 'default'
-            },
-            {
-              'description': 'Date of census',
-              'format': 'any',
-              'biosys': {
-                'type': 'observationDate'
-              },
-              'constraints': {
-                'required': true
-              },
-              'type': 'datetime',
-              'name': 'Start Date and time'
-            },
-            {
-              'description': 'End of census',
-              'constraints': {
-                'required': true
-              },
-              'type': 'datetime',
-              'name': 'End Date and time',
-              'format': 'any'
-            },
-            {
-              'constraints': {
-                'required': true
-              },
-              'type': 'string',
-              'name': 'Census Observers',
-              'format': 'default'
-            },
-            {
-              'constraints': {
-                'enum': [
-                  'WGS84'
-                ],
-                'required': true
-              },
-              'type': 'string',
-              'name': 'Datum',
-              'format': 'default'
-            },
-            {
-              'description': 'Latitude of the SAT start tree',
-              'format': 'default',
-              'biosys': {
-                'type': 'latitude'
-              },
-              'constraints': {
-                'max': -20,
-                'required': true,
-                'min': -40
-              },
-              'type': 'number',
-              'name': 'Latitude'
-            },
-            {
-              'description': 'Longitude of the SAT start tree',
-              'format': 'default',
-              'biosys': {
-                'type': 'longitude'
-              },
-              'constraints': {
-                'max': 162,
-                'required': true,
-                'min': 138
-              },
-              'type': 'number',
-              'name': 'Longitude'
-            },
-            {
-              'description': 'How accurately the coordinates represent the exact location of the species (in metres, up to 4 decimal places).',
-              'format': 'default',
-              'title': 'Accuracy (metres)',
-              'constraints': {
-                'required': true,
-                'min': 0
-              },
-              'type': 'number',
-              'name': 'Accuracy'
-            },
-            {
-              'description': 'Whole number between 0 and 2500 (in metres).',
-              'format': 'default',
-              'title': 'Altitude (metres)',
-              'constraints': {
-                'max': 2500,
-                'required': true,
-                'min': 0
-              },
-              'type': 'integer',
-              'name': 'Altitude'
-            },
-            {
-              'constraints': {
-                'enum': [
-                  'Aboriginal Area',
-                  'CCA Zone 1 National Park',
-                  'CCA Zone 2 Aboriginal Area',
-                  'CCA Zone 3 State Conservation Area',
-                  'Conservation Agreement',
-                  'Council Reserve',
-                  'Council Reserve (LGA)',
-                  'Crown Leasehold',
-                  'Crown Leasehold (Travelling Stock Route)',
-                  'Enclosure Permit',
-                  'Flora Reserve',
-                  'Freehold',
-                  'Game Reserve',
-                  'Historic Site',
-                  'Indigenous Managed Property',
-                  'Indigenous Protected Area',
-                  'Karst Conservation Reserve',
-                  'Leasehold',
-                  'Military Land',
-                  'National Park',
-                  'Nature Reserve',
-                  'Other',
-                  'Private Property',
-                  'Proposal Abandoned',
-                  'Proposal, Category Undetermined',
-                  'Proposed Aboriginal Area',
-                  'Proposed Game Reserve',
-                  'Proposed Historic Site',
-                  'Proposed National Park',
-                  'Proposed Nature Reserve',
-                  'Proposed State Recreation Area',
-                  'Proposed Wildlife Management Area',
-                  'Proposed Wildlife Reserve',
-                  'Regional Park',
-                  'Road Reserve',
-                  'State Conservation Area',
-                  'State Forest',
-                  'State Park',
-                  'State Recreation Area',
-                  'Travelling Stock Reserve',
-                  'Vacant Crown Land',
-                  'Water Catchment Area',
-                  'Western Lands Lease',
-                  'Wildlife Management Area',
-                  'Wildlife Refuge'
-                ]
-              },
-              'type': 'string',
-              'name': 'Tenure',
-              'format': 'default'
-            },
-            {
-              'type': 'string',
-              'name': 'Property/ Reserve name',
-              'format': 'default'
-            },
-            {
-              'description': 'Detailed description of the geographic location, such as street, nearest cross street, town, landmark or reserve.',
-              'constraints': {
-                'required': false
-              },
-              'type': 'string',
-              'name': 'Location Description',
-              'format': 'default'
-            },
-            {
-              'constraints': {
-                'enum': [
-                  'Koala SAT Survey'
-                ],
-                'required': true
-              },
-              'type': 'string',
-              'name': 'Census Type',
-              'format': 'default'
-            },
-            {
-              'description': 'e.g. how the start tree was selected, the grid size if applicable, predefined search distance and time for each tree searched',
-              'type': 'string',
-              'name': 'Census method notes',
-              'format': 'default'
-            },
-            {
-              'description': 'Did you take a photograph of the site?',
-              'constraints': {
-                'enum': [
-                  'Yes',
-                  'No'
-                ]
-              },
-              'type': 'string',
-              'name': 'Site photos',
-              'format': 'default'
-            },
-            {
-              'description': 'Did you take scat samples for external analysis?',
-              'constraints': {
-                'enum': [
-                  'Yes',
-                  'No'
-                ]
-              },
-              'type': 'string',
-              'name': 'Scat samples',
-              'format': 'default'
-            },
-            {
-              'description': 'Did you take tree and/or scat specimens for ID verification?',
-              'constraints': {
-                'enum': [
-                  'Yes',
-                  'No'
-                ]
-              },
-              'type': 'string',
-              'name': 'Tree specimens',
-              'format': 'default'
-            }
-          ],
-          'primaryKey': 'Census ID',
-          'missingValues': [
-            ''
-          ]
-        }
-      }
-    ],
-    'title': 'Koala Scat Census'
-  };
-
   private validationErrorToDisplay = '';
-  public jsonSchema = {};
-  public jsonSchemaString = {};
-  public layoutSchema = {};
 
-  public jsonSchemaFake =
-    {
-      'type': 'object',
-      'properties': {
-        'Census ID': {
-          'type': 'string',
-          'format': 'default' },
-        'SiteNo': {
-          'type': 'string',
-          'format': 'default' },
-        'EntryOrder': {
-          'type': 'integer',
-          'format': 'default',
-          'enum': ['A']
-        },
-        'DateFirst': {
-          'type': 'string',
-          'format': 'date-time'
-        },
-        'DateLast': {
-          'type': 'string',
-          'format': 'date-time',
-          'enum': ['AA'] },
-        'SubplotID': {
-          'type': 'string',
-          'format': 'default',
-          'enum': ['AAA'] },
-        'Type': {
-          'type': 'string',
-          'format': 'default',
-          'enum': ['FL'] },
-        'ScientificName': {
-          'type': 'string',
-          'enum': [
-            'Acacia spp.',
-            'Acmena smithii',
-            'Allocasuarina littoralis',
-            'Allocasuarina torulosa',
-            'Alphitonia excelsa',
-            'Angophora bakeri',
-            'Angophora costata',
-            'Angophora floribunda',
-            'Angophora subvelutina',
-            'Banksia spp.',
-            'Brachychiton populneus',
-            'Callitris columellaris',
-          ]
-        },
-        'SpeciesCode': {
-          'type': 'string',
-          'format': 'default',
-          'enum': [
-            'ACAC',
-            '3968',
-            '2012'
-          ]
-        },
-        'CommonName': {
-          'type': 'string',
-          'format': 'default',
-          'enum': ['AS']
-        },
-        'DBH': {
-          'type': 'integer',
-          'format': 'default',
-          'minimum': 0
-        },
-        'Koala Scat': {
-          'type': 'string',
-          'format': 'default',
-          'enum': [
-            'Yes',
-            'No'
-          ]
-        },
-        'Scat Age': {
-          'type': 'string',
-          'format': 'default',
-          'enum': [
-            '1',
-            '2',
-          ]
-        },
-        'Koala count': {
-          'type': 'integer',
-          'format': 'default',
-          'minimum': 0
-        },
-        'Tree Notes': {
-          'type': 'string',
-          'format': 'default'
-        },
-        'Koala/ Scat notes': {
-          'type': 'string',
-          'format': 'default'
-        }
-      },
-      'required': [
-        'Census ID',
-        'SiteNo',
-        'DateFirst',
-        'Type',
-        'ScientificName',
-        'SpeciesCode'
-      ]
-    };
+  private coordinates: any = {};
+  private locationObservable: Observable<Geoposition>;
+  private locationSubscription: Subscription;
+  private isEdit = false;
 
-  public layoutSchemaFake = {
-    'schema': {
-      'required': ['IndDetectionID'],
-      'type': 'object',
-      'properties': {
-        'SpeciesID': { 'type': 'number', 'description': 'SpeciesID desc', 'title': 'SpeciesID' },
-        'IndDetectionID': { 'type': 'number', 'description': 'IndDetectionID Desc', 'title': 'IndDetectionID' },
-        'Species': { 'enum': ['A', 'B', 'C'], 'type': 'string', 'description': 'Species Desc', 'title': 'Species Test' }
-      },
-      'form': [{
-        'title': 'IndDet Title',
-        'placeholder': 'IndDetectionID placeholder',
-        'key': 'IndDetectionID',
-        'label': 'HelloInd'
-      }, { 'title': 'Species ID Title', 'placeholder': 'Species ID Placeholder', 'key': 'SpeciesID', 'label': 'Hello' }, 'Species'],
-      'title': 'This is a test'
-    }
+  private data = {};
+
+  public formParameters = {
+    // https://github.com/hamzahamidi/angular6-json-schema-form#readme
+    /* Single-input mode
+    You may also combine all your inputs into one compound object and include it as a form input, like so:
+      const yourCompoundInputObject = {
+        schema:    { ... },  // REQUIRED
+        layout:    [ ... ],  // optional
+        data:      { ... },  // optional
+        options:   { ... },  // optional
+        widgets:   { ... },  // optional
+        language:   '...' ,  // optional
+        framework:  '...'    // (or { ... }) optional
+      }
+
+     This allows us to provide a data object only if we are editing.
+     */
   };
 
-  constructor(private mobileService: MobileService, private router: Router, private pageLocation: Location) {
-    // const formSchema = mobileService.getViewForm(); // || this.yourJsonSchema;
-    // this.layoutSchema = formSchema.layout;
-    // console.log('layoutschema', JSON.stringify(this.layoutSchema));
-    // this.jsonSchema = mobileService.getForm2(formSchema.table_schema);
-    // this.jsonSchemaString = JSON.stringify(this.jsonSchema);
-    // console.log('jsonschema', this.jsonSchemaString);
+  constructor(private mobileService: MobileService,
+              private router: Router,
+              private pageLocation: Location,
+              private storage: StorageService,
+              private geolocation: Geolocation
+  ) {
+    // TODO: 2019-05-27: use this to enable "edit" from Upload screen
+    this.formRecord = this.mobileService.formEditData;
+    if (this.formRecord) {
+      this.isEdit = true;
+      this.formData = this.formRecord.data;
+      this.data = this.formRecord.data;
+      this.formParameters['data'] = this.formRecord.data;
+    }
+
+    this.schemaSchema = mobileService.getViewForm();
+    this.formSchema = mobileService.morphForm(this.schemaSchema['table_schema']);
+    console.log('formGenScheme', JSON.stringify(this.formSchema));
+
+    this.formParameters['schema'] = this.formSchema.jsonSchema;
+    if (!this.schemaSchema.layout.hasOwnProperty('test')) {
+      this.formParameters['layout'] = this.schemaSchema.layout;
+    }
+
+    console.log('formview', this.formParameters);
+    console.log('formview', JSON.stringify(this.formParameters));
+
+    const watchOptions: PositionOptions = {
+      enableHighAccuracy: true,
+      maximumAge: GEOLOCATION_MAX_AGE,
+      timeout: GEOLOCATION_TIMEOUT,
+    };
+    this.locationObservable = this.geolocation.watchPosition(watchOptions);
+    this.locationSubscription = this.locationObservable.subscribe( (position) => {
+      if (!this.isEdit && position.coords) {
+        console.log('gps_ok', position);
+        this.coordinates.latitude = position.coords.latitude;
+        this.coordinates.longitude = position.coords.longitude;
+        this.coordinates.accuracy = position.coords.accuracy;
+        this.coordinates.altitude = position.coords.altitude;
+        this.coordinates.altitudeAccuracy = position.coords.altitudeAccuracy;
+        this.coordinates.heading = position.coords.heading;
+        this.coordinates.speed = position.coords.speed;
+        this.updateLocationFields();
+      }
+    }, (error) => {
+      console.log('gps_err', error);
+    });
     return;
   }
 
-  ngOnInit() {
+  ngOnDestroy() {
+    if (this.locationSubscription) {
+      this.locationSubscription.unsubscribe();
+    }
   }
 
+  onChange(event) {
+    for (const parameter in this.formParameters['schema']['properties']) {
+      if (this.formParameters['schema']['properties'][parameter]['format'] === 'date-time' ||
+        this.formParameters['schema']['properties'][parameter]['format'] === 'datetime') {
+        if (this.data[parameter].endsWith('Z')) {
+          this.data[parameter] = this.data[parameter].replace('Z', '');
+        }
+      }
+    }
+    return;
+  }
 
   onSubmit(data: any) {
     console.log('submitted', data);
-    this.pageLocation.back();
     if (this.formIsValid) {
+      // TODO: work out how to patch coordinate data into the depths of the schema
+      if (!this.coordinates) {
+        alert('Still reading location - try again later');
+        return;
+      }
+
+      console.log('location-submit', this.coordinates);
+
+      if (this.isEdit) {
+        data['location'] = this.formData['location'];
+      } else {
+        data['location'] = {
+          latitude: this.coordinates.latitude,
+          longitude: this.coordinates.longitude,
+          accuracy: this.coordinates.accuracy,
+          altitude: this.coordinates.altitude,
+          altitudeAccuracy: this.coordinates.altitudeAccuracy,
+          heading: this.coordinates.heading,
+          speed: this.coordinates.speed,
+        };
+      }
       this.submittedFormData = data;
-
-      // TODO: patch sensor data in
-
-      const dataPoint: any = {
-        dataSetID: this.formSchema.dataset,
-        formData: data,
+      if (this.isEdit) {
+        console.log('putid1', this.formData);
+      }
+      const theRecord: ClientRecord = {
+        valid: true,
+        datasetName: this.schemaSchema.name,
+        datetime: this.isEdit ? this.formRecord.datetime : moment().format(),
+        count: 1,
+        photoIds: [],
+        dataset: this.schemaSchema.dataset,
+        client_id: this.isEdit ? this.formRecord.client_id : UUID.UUID(),
+        data: data,
       };
-
+      this.storage.putRecord(theRecord).subscribe((ok) => {
+        console.log('putok', ok);
+        this.pageLocation.back();
+      }, (err) => {
+        console.log('puterr', err);
+      });
     } else {
       alert(this.validationErrorToDisplay);
     }
     return;
   }
 
-  onChanges(data: any) {
-    this.liveFormData = data;
-  }
-
   isValid(isValid: boolean): void {
     this.formIsValid = isValid;
-    console.log('isvalid', isValid);
   }
 
   getFieldTitle(titlePath: string): string {
@@ -527,6 +198,31 @@ export class FormViewerPage implements OnInit {
       }
     } catch (exception) {
       this.validationErrorToDisplay = '';
+    }
+    return;
+  }
+
+  public updateLocationFields(initialUpdate = false) {
+    console.log('schema', this.formParameters);
+    console.log('data', this.data);
+    if (!this.formParameters || !Object.keys(this.data).length ) {
+      return;
+    }
+    if (this.formParameters['schema']['properties'].hasOwnProperty('Latitude')) {
+      console.log('haslat', 'yes');
+      this.data['Latitude'] = this.coordinates.latitude.toFixed(6);
+    }
+
+    if (this.formParameters['schema']['properties'].hasOwnProperty('Longitude')) {
+      this.data['Longitude'] = this.coordinates.longitude.toFixed(6);
+    }
+
+    if (this.formParameters['schema']['properties'].hasOwnProperty('Accuracy')) {
+      this.data['Accuracy'] = Math.round(this.coordinates.accuracy);
+    }
+
+    if (this.formParameters['schema']['properties'].hasOwnProperty('Altitude')) {
+      this.data['Altitude'] = Math.round(this.coordinates.altitude);
     }
     return;
   }

@@ -8,30 +8,25 @@
     <ion-virtual-scroll [items]="mobileState.projects">
         <ion-item *virtualItem="let item">
             <ion-item lines="none" *ngIf="!mobileState.offline">
-                <ion-checkbox (click)="projectToggle(item, checked)" slot="start"></ion-checkbox>
+                <ion-checkbox (click)="projectToggle(item)" slot="start"></ion-checkbox>
             </ion-item>
-            <ion-item lines="none" (click)="projectGo(item)">
+            <ion-item lines="none" (click)="projectClicked(item)">
                 <ion-label style="color: black">{{item.name}}</ion-label>
             </ion-item>
         </ion-item>
     </ion-virtual-scroll>
+</ion-content>
 
+<ion-footer>
     <ion-item-group>
-        <!--<ion-item *ngIf="!mobileState.offline">-->
-            <!--<ion-button-->
-                    <!--(click)="upload()"-->
-                    <!--color="warning"-->
-                    <!--style="width: 100%; padding: 5pt"-->
-                    <!--size="large"-->
-                    <!--expand="block">Upload</ion-button>-->
-        <!--</ion-item>-->
         <ion-item>
             <ion-button
+                    text-wrap
                     (click)="offlineToggle()"
                     [color]="mobileState.offline ? 'success' : 'danger'"
-                    style="width: 100%; padding: 5pt"
+                    style="width: 100%; padding: 5pt;"
                     size="large"
-                    expand="block">{{mobileState.offline ? 'Go Online' : 'Go Offline'}}</ion-button>
+                    expand="block">{{mobileState.offline ? 'Go Online' : "Download & Go Offline"}}</ion-button>
         </ion-item>
     </ion-item-group>
-</ion-content>
+</ion-footer>
