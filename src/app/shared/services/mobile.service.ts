@@ -21,6 +21,8 @@ export class MobileService extends APIService {
 
   private _formEditData: any;
 
+  private _siteList = [];
+
   constructor(@Inject(HttpClient) httpClient, private storage: Storage) {
     super(httpClient);
     storage.get('offline').then ((value) => {
@@ -113,7 +115,17 @@ export class MobileService extends APIService {
     return this._viewingForm;
   }
 
+  public setSiteList(siteList: any) {
+    this._siteList = siteList;
+  }
+
+  public getSiteList() {
+    return this._siteList;
+  }
+
   public morphForm(tableSchema: any) {
+    console.log('morphin',  JSON.stringify(tableSchema));
+
     const layout = [];
     const jsonSchema = {
       'type': 'object',
@@ -128,9 +140,25 @@ export class MobileService extends APIService {
       const field = actualSchema.fields[i];
       console.log('considering field: ' + field.name);
       let currentLayout = null;
+
       jsonSchema.properties[field.name] = {
         'type': field.type
       };
+
+      if (field.name === 'Site Code' || (field.type && field.type === 'siteCode')) {
+        const siteCodeList = [];
+        for (const site in this._siteList) {
+          if (site) {
+            for (const key in this._siteList[site]) {
+              if (key) {
+                siteCodeList.push(key);
+              }
+            }
+          }
+        }
+        console.log('sitecodes', JSON.stringify(siteCodeList));
+        jsonSchema.properties[field.name]['enum'] = siteCodeList;
+      }
 
       if (field['format'] != null) {
         jsonSchema.properties[field.name].format = field['format'];
@@ -181,10 +209,12 @@ export class MobileService extends APIService {
       }
     }
 
-    return {
+    const rv =  {
       jsonSchema: jsonSchema,
       layout: layout
     };
+    console.log('morph', JSON.stringify(rv));
+    return rv;
   }
 
   public set formEditData(data: any) {

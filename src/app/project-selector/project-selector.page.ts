@@ -39,6 +39,9 @@ export class ProjectSelectorPage {
         theForms.push(form);
       }
     }
+
+    this.mobileState.setSiteList(forms['sites'][project.id]);
+
     if (!theForms || theForms.length) {
       this.mobileState.setProjectForms(project.id, theForms);
       await this.loading.dismiss();

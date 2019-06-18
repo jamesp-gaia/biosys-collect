@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MobileService } from '../shared/services/mobile.service';
 import { Router } from '@angular/router';
+import { LoadingController } from '@ionic/angular';
+import { from } from 'rxjs';
 
 @Component({
   selector: 'app-form-selector',
@@ -13,7 +15,10 @@ export class FormSelectorPage implements OnInit {
 
   public indentedForms: any;
 
-  constructor(private router: Router,
+  private loading: any;
+
+  constructor(private loadingCtrl: LoadingController,
+              private router: Router,
               private mobileService: MobileService) {
     this.forms = mobileService.getProjectForms(mobileService.currentProject.id);
     this.indentedForms = [];
@@ -48,10 +53,25 @@ export class FormSelectorPage implements OnInit {
     this.offline = this.mobileService.offline;
   }
 
-  public formClicked(form: any) {
-    this.mobileService.setViewForm(form);
-    this.mobileService.formEditData = null;
-    this.router.navigateByUrl('form-viewer');
+  private async presentLoading(config?: any): Promise<any> {
+    this.loading = await this.loadingCtrl.create(config);
+    return await this.loading.present();
+  }
+
+  public async ionViewWillLeave() {
+    if (this.loading) {
+      await this.loading.dismiss();
+    }
+  }
+
+  public async formClicked(form: any) {
+    from (this.presentLoading({
+      message: 'Loading form ...',
+    })).subscribe( () => {
+      this.mobileService.setViewForm(form);
+      this.mobileService.formEditData = null;
+      this.router.navigateByUrl('form-viewer');
+    });
   }
 
   public sitesClicked() {

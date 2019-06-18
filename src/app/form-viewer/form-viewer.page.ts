@@ -69,15 +69,16 @@ export class FormViewerPage implements OnDestroy {
 
     this.schemaSchema = mobileService.getViewForm();
     this.formSchema = mobileService.morphForm(this.schemaSchema['table_schema']);
-    console.log('formGenScheme', JSON.stringify(this.formSchema));
 
     this.formParameters['schema'] = this.formSchema.jsonSchema;
     if (!this.schemaSchema.layout.hasOwnProperty('test')) {
       this.formParameters['layout'] = this.schemaSchema.layout;
     }
 
-    console.log('formview', this.formParameters);
-    console.log('formview', JSON.stringify(this.formParameters));
+    console.log('formview-ss', JSON.stringify(this.schemaSchema));
+    console.log('formGenScheme', JSON.stringify(this.formSchema));
+    console.log('formview-fp', JSON.stringify(this.formParameters));
+    console.log('formview-proj', JSON.stringify(this.mobileService.currentProject));
 
     const watchOptions: PositionOptions = {
       enableHighAccuracy: true,
