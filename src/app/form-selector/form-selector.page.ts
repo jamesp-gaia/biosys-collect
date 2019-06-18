@@ -22,11 +22,13 @@ export class FormSelectorPage implements OnInit {
         form: key,
         indentation: 0
       });
-      for (const childrenKeys of key['children']) {
-        this.indentedForms.push({
-          form: childrenKeys,
-          indentation: 1
-        });
+      if (key['children']) {
+        for (const childrenKeys of key['children']) {
+          this.indentedForms.push({
+            form: childrenKeys,
+            indentation: 1
+          });
+        }
       }
     }
   }

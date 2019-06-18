@@ -113,7 +113,7 @@ export class FormViewerPage implements OnDestroy {
     for (const parameter in this.formParameters['schema']['properties']) {
       if (this.formParameters['schema']['properties'][parameter]['format'] === 'date-time' ||
         this.formParameters['schema']['properties'][parameter]['format'] === 'datetime') {
-        if (this.data[parameter].endsWith('Z')) {
+        if (this.data[parameter] && this.data[parameter].endsWith('Z')) {
           this.data[parameter] = this.data[parameter].replace('Z', '');
         }
       }
@@ -210,7 +210,6 @@ export class FormViewerPage implements OnDestroy {
       return;
     }
     if (this.formParameters['schema']['properties'].hasOwnProperty('Latitude')) {
-      console.log('haslat', 'yes');
       this.data['Latitude'] = this.coordinates.latitude.toFixed(6);
     }
 

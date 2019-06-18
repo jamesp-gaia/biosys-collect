@@ -39,9 +39,18 @@ export class ProjectSelectorPage {
         theForms.push(form);
       }
     }
-    this.mobileState.setProjectForms(project.id, theForms);
-    await this.loading.dismiss();
-    this.router.navigateByUrl('/form-selector');
+    if (!theForms || theForms.length) {
+      this.mobileState.setProjectForms(project.id, theForms);
+      await this.loading.dismiss();
+      this.router.navigateByUrl('/form-selector');
+    } else {
+      await this.loading.dismiss();
+      (await this.alertController.create({
+        header: 'No forms for this project',
+        subHeader: 'This project does not have any forms associated with it. Please try a different project.',
+        buttons: ['Ok']
+      })).present();
+    }
   }
 
   public async projectClicked(project: any) {
@@ -58,7 +67,7 @@ export class ProjectSelectorPage {
         });
       } else {
         this.mobileState.getForms(project).subscribe(
-      async (forms) => {
+          async (forms) => {
             this.projectGo(project, forms);
           }, async (err) => {
             await this.loading.dismiss();
@@ -81,10 +90,10 @@ export class ProjectSelectorPage {
     if (!this.mobileState.offline) {
       if (Object.keys(this.clickedStatus).length <= 0) {
         (await this.alertController.create({
-            header: 'No projects selected',
-            subHeader: 'No projects were selected for pre-loading. Select the projects you wish to access while offline and try again.',
-            buttons: ['Ok']
-          })).present();
+          header: 'No projects selected',
+          subHeader: 'No projects were selected for pre-loading. Select the projects you wish to access while offline and try again.',
+          buttons: ['Ok']
+        })).present();
       } else {
         this.loading = await this.loadingCtrl.create({
           message: 'Caching projects for offline use ...',
