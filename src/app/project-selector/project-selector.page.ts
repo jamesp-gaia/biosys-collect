@@ -116,4 +116,8 @@ export class ProjectSelectorPage {
     }
     return;
   }
+
+  public uploadClicked() {
+    this.router.navigateByUrl('upload');
+  }
 }

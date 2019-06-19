@@ -79,10 +79,6 @@ export class FormSelectorPage implements OnInit {
     return;
   }
 
-  public uploadClicked() {
-    this.router.navigateByUrl('upload');
-  }
-
   public dataViewClicked() {
     this.router.navigateByUrl('record-list');
   }

@@ -145,7 +145,12 @@ export class MobileService extends APIService {
         'type': field.type
       };
 
-      if (field.name === 'Site Code' || (field.type && field.type === 'siteCode')) {
+      // if we encounter a "site code", replace it with a dropdown of
+      // site codes from the project description.
+      if (field.name === 'Site Code'
+        || (field.type && field.type === 'siteCode')
+        || ('biosys' in field && 'type' in field['biosys'] && field['biosys']['type'] === 'siteCode')
+      ) {
         const siteCodeList = [];
         for (const site in this._siteList) {
           if (site) {
@@ -192,7 +197,9 @@ export class MobileService extends APIService {
         }
       }
       if (field['title'] != null) {
-        if (currentLayout === null) {currentLayout = { 'key': field.name };}
+        if (currentLayout === null) {
+          currentLayout = { 'key': field.name };
+        }
         currentLayout['title'] = field['title'];
 
       }
@@ -213,7 +220,7 @@ export class MobileService extends APIService {
       jsonSchema: jsonSchema,
       layout: layout
     };
-    console.log('morph', JSON.stringify(rv));
+    // console.log('morph', JSON.stringify(rv));
     return rv;
   }
 
