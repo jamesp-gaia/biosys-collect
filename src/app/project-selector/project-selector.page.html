@@ -2,6 +2,11 @@
     <ion-toolbar>
         <ion-title>Select Project:</ion-title>
     </ion-toolbar>
+    <ion-item text-wrap>
+        Use the check boxes to select which projects you wish to
+            download for offline-use, or tap a project name to enter data or
+        add a site for that project while online.
+    </ion-item>
 </ion-header>
 
 <ion-content>
@@ -27,6 +32,15 @@
                     style="width: 100%; padding: 5pt;"
                     size="large"
                     expand="block">{{mobileState.offline ? 'Go Online' : "Download & Go Offline"}}</ion-button>
+        </ion-item>
+        <ion-item>
+            <ion-button
+                    text-wrap
+                    *ngIf="!offline" (click)="uploadClicked()"
+                    style="width: 100%; padding: 5pt;"
+                    size="large"
+                    expand="block"
+                    block class="fs-view-sites">Upload (All Projects)</ion-button>
         </ion-item>
     </ion-item-group>
 </ion-footer>

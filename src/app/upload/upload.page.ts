@@ -120,25 +120,33 @@ export class UploadPage implements OnInit {
         this.apiService.createRecord(x, false).subscribe(async (value) => {
           this.markers[x.client_id].remove();
           this.storageService.deleteRecord(x.client_id);
-          if (--this.pinCount === 0) {
-            await uploadSpin.dismiss();
-            (await this.alertController.create({
-              header: 'Upload Complete',
-              subHeader: 'Records "uploaded"',
-              buttons: ['Ok']
-            })).present();
-          }
+          // if (--this.pinCount === 0) {
+          //   await uploadSpin.dismiss();
+          //   (await this.alertController.create({
+          //     header: 'Upload Complete',
+          //     subHeader: 'Records "uploaded"',
+          //     buttons: ['Ok']
+          //   })).present();
+          // }
         }, async (err) => {
-          if (--this.pinCount === 0) {
-            await uploadSpin.dismiss();
-            (await this.alertController.create({
-              header: 'Upload Complete',
-              subHeader: 'Records "uploaded"',
-              buttons: ['Ok']
-            })).present();
-          }
+          console.log('upload', JSON.stringify(err));
+          // if (--this.pinCount === 0) {
+          //   await uploadSpin.dismiss();
+          //   (await this.alertController.create({
+          //     header: 'Upload Complete',
+          //     subHeader: 'Records "uploaded"',
+          //     buttons: ['Ok']
+          //   })).present();
+          // }
         });
       }
+    }, () => {}, async () => {
+      await uploadSpin.dismiss();
+      (await this.alertController.create({
+        header: 'Upload Complete',
+        subHeader: 'Records "uploaded"',
+        buttons: ['Ok']
+      })).present();
     });
   }
 }
