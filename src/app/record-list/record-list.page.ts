@@ -32,16 +32,28 @@ export class RecordListPage implements OnInit {
   }
 
   clicked(x: ClientRecord) {
-    const project = this.mobileService.currentProject;
-    const forms = this.mobileService.getProjectForms(project.id);
     let form;
-    for (const i of forms) {
-      if (i.dataset === x.dataset) {
-        form = i;
+    for (const project of this.mobileService.projects) {
+      // const project = this.mobileService.currentProject;
+      const forms = this.mobileService.getProjectForms(project.id);
+      console.log('editdata', JSON.stringify(x)); // FIXME
+      for (const i of forms) {
+        console.log('formsearch', JSON.stringify(i));
+        if (i.dataset === x.dataset) {
+          form = i;
+          break;
+        }
+        if (i['children']) {
+          for (const child of i['children']) {
+            if (child.dataset === x.dataset) {
+              form = child;
+              break;
+            }
+          }
+        }
       }
     }
-    console.log('editform', form);
-    console.log('editdata', x); // FIXME
+    console.log('editform', JSON.stringify(form));
     this.mobileService.setViewForm(form);
     this.mobileService.formEditData = x;
     this.router.navigateByUrl('form-viewer');

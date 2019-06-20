@@ -68,15 +68,16 @@ export class FormViewerPage implements OnDestroy {
 
     this.schemaSchema = mobileService.getViewForm();
     this.formSchema = mobileService.morphForm(this.schemaSchema['table_schema']);
-    console.log('formGenScheme', JSON.stringify(this.formSchema));
 
     this.formParameters['schema'] = this.formSchema.jsonSchema;
     if (!this.schemaSchema.layout.hasOwnProperty('test')) {
       this.formParameters['layout'] = this.schemaSchema.layout;
     }
 
-    console.log('formview', this.formParameters);
-    console.log('formview', JSON.stringify(this.formParameters));
+    // console.log('formview-ss', JSON.stringify(this.schemaSchema));
+    // console.log('formGenScheme', JSON.stringify(this.formSchema));
+    // console.log('formview-fp', JSON.stringify(this.formParameters));
+    // console.log('formview-proj', JSON.stringify(this.mobileService.currentProject));
 
     const watchOptions: PositionOptions = {
       enableHighAccuracy: true,
@@ -86,7 +87,7 @@ export class FormViewerPage implements OnDestroy {
     this.locationObservable = this.geolocation.watchPosition(watchOptions);
     this.locationSubscription = this.locationObservable.subscribe( (position) => {
       if (!this.isEdit && position.coords) {
-        console.log('gps_ok', position);
+        // console.log('gps_ok', position);
         this.coordinates.latitude = position.coords.latitude;
         this.coordinates.longitude = position.coords.longitude;
         this.coordinates.accuracy = position.coords.accuracy;
@@ -109,10 +110,13 @@ export class FormViewerPage implements OnDestroy {
   }
 
   onChange(event) {
+    // remove the "Z" from the datetime data - despite being the data
+    // that the auto-form generator created, it complains about the
+    // bogusity of it's own internal state!
     for (const parameter in this.formParameters['schema']['properties']) {
       if (this.formParameters['schema']['properties'][parameter]['format'] === 'date-time' ||
         this.formParameters['schema']['properties'][parameter]['format'] === 'datetime') {
-        if (this.data[parameter].endsWith('Z')) {
+        if (this.data[parameter] && this.data[parameter].endsWith('Z')) {
           this.data[parameter] = this.data[parameter].replace('Z', '');
         }
       }
@@ -129,7 +133,7 @@ export class FormViewerPage implements OnDestroy {
         return;
       }
 
-      console.log('location-submit', this.coordinates);
+      // console.log('location-submit', this.coordinates);
 
       if (this.isEdit) {
         data['location'] = this.formData['location'];
@@ -145,9 +149,9 @@ export class FormViewerPage implements OnDestroy {
         };
       }
       this.submittedFormData = data;
-      if (this.isEdit) {
-        console.log('putid1', this.formData);
-      }
+      // if (this.isEdit) {
+      //   console.log('putid1', this.formData);
+      // }
       const theRecord: ClientRecord = {
         valid: true,
         datasetName: this.schemaSchema.name,
@@ -159,7 +163,7 @@ export class FormViewerPage implements OnDestroy {
         data: data,
       };
       this.storage.putRecord(theRecord).subscribe((ok) => {
-        console.log('putok', ok);
+        // console.log('putok', ok);
         this.pageLocation.back();
       }, (err) => {
         console.log('puterr', err);
@@ -183,9 +187,9 @@ export class FormViewerPage implements OnDestroy {
 
   validationErrors(data: any): void {
     try {
-      console.log('valerr', data);
       this.formValidationErrors = data;
       if (data.length > 0) {
+        console.log('valerr', data);
         const err = data[0];
         if (err.keyword === 'required') {
           this.validationErrorToDisplay = `${err.message || ''}`;
@@ -203,13 +207,12 @@ export class FormViewerPage implements OnDestroy {
   }
 
   public updateLocationFields(initialUpdate = false) {
-    console.log('schema', this.formParameters);
-    console.log('data', this.data);
+    // console.log('schema', this.formParameters);
+    // console.log('data', this.data);
     if (!this.formParameters || !Object.keys(this.data).length ) {
       return;
     }
     if (this.formParameters['schema']['properties'].hasOwnProperty('Latitude')) {
-      console.log('haslat', 'yes');
       this.data['Latitude'] = this.coordinates.latitude.toFixed(6);
     }
 
